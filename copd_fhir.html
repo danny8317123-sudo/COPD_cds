@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<script src="https://cdn.jsdelivr.net/npm/fhirclient@2.6.3/build/fhir-client.js"></script>
+<script src="copd_rules.js"></script>
+<script src="copd_products.js"></script>
+<script src="copd_engine.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COPD Sustainable Rx Assist｜SMART on FHIR v0.1</title>
+<style>
+:root {
+  --bg:#f6f7f8; --card:#fff; --line:#d9dde3; --text:#17202a; --muted:#667085;
+  --navy:#24415c; --blue:#315f86; --soft:#eef3f7; --warn:#fff8e6; --danger:#fff1f1;
+  --good:#eef7f1;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--text);font-size:14px}
+header{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:5}
+.brand{font-weight:700;font-size:18px;color:var(--navy)} .sub{font-size:12px;color:var(--muted);margin-left:10px}
+.header-note{color:var(--muted);font-size:12px}
+main{max-width:1280px;margin:18px auto;padding:0 18px 32px}
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+button{font:inherit;border:1px solid #b8c1cc;background:#fff;border-radius:6px;padding:7px 10px;cursor:pointer;color:#27384a}
+button:hover{background:#f5f8fb} button.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+button.ghost{border-color:transparent;background:transparent;color:var(--blue)}
+.grid{display:grid;grid-template-columns:400px minmax(0,1fr);gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:12px}
+.card h2{font-size:15px;margin:0 0 12px;color:#24384b}
+.section-title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:15px 0 8px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field label{display:block;color:#475467;font-size:12px;margin-bottom:4px}
+input,select{width:100%;border:1px solid #cbd2da;border-radius:5px;padding:7px 8px;background:white;color:var(--text);font:inherit}
+input[type=number]{text-align:right}
+.pills{display:flex;gap:7px;flex-wrap:wrap}
+.pill-btn{padding:7px 10px;border-radius:999px}
+.pill-btn.active{background:#e8f0f7;border-color:#8ca9c0;color:#183b57;font-weight:600}
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.kpi{border:1px solid var(--line);border-radius:6px;padding:10px;background:#fbfcfd}
+.kpi small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+.kpi strong{font-size:16px;color:#21384d}
+.notice{border-left:4px solid #6d8da8;background:var(--soft);padding:10px 12px;border-radius:4px;margin:10px 0;line-height:1.5}
+.notice.warn{border-color:#d9a51d;background:var(--warn)} .notice.danger{border-color:#c74c4c;background:var(--danger)} .notice.good{border-color:#5b9a71;background:var(--good)}
+.decision{font-size:21px;font-weight:750;color:#163c58;margin:3px 0 6px}
+.reason-list{margin:7px 0 0 18px;padding:0;color:#4b5563;line-height:1.55}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:720px;background:#fff}
+th,td{padding:9px 10px;border-bottom:1px solid #e5e8ec;text-align:left;vertical-align:top}
+th{background:#f7f9fb;color:#475467;font-size:12px;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;border:1px solid #cbd5df;background:#f7f9fb;border-radius:999px;padding:2px 7px;font-size:11px;white-space:nowrap}
+.tag.ok{background:#eef7f1;border-color:#b8d7c2;color:#326646}
+.tag.no{background:#fff1f1;border-color:#ecc2c2;color:#9e3838}
+.tag.unknown{background:#fff8e6;border-color:#e7d398;color:#7b621b}
+.carbon{font-variant-numeric:tabular-nums;font-weight:650}
+.muted{color:var(--muted);font-size:12px}
+.hidden{display:none!important}
+details{border-top:1px solid #edf0f2;margin-top:12px;padding-top:10px}
+summary{cursor:pointer;color:#365a78;font-weight:600}
+.footer-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.preview{border:1px solid #cbd5df;background:#fbfcfd;border-radius:6px;padding:12px;margin-top:10px}
+.preview strong{font-size:16px}
+.rule{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
+.dot{width:7px;height:7px;border-radius:50%;background:#668aa5;margin-top:7px;flex:0 0 auto}
+#toast{position:fixed;right:20px;bottom:20px;background:#24384b;color:#fff;padding:9px 12px;border-radius:6px;display:none}
+@media(max-width:900px){.grid{grid-template-columns:1fr} .summary{grid-template-columns:1fr 1fr}}
+@media print{header,.toolbar,.left-panel,.footer-actions,button{display:none!important} .grid{display:block} body{background:#fff} .card{break-inside:avoid}}
+
+.fhir-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:11px 14px;margin-bottom:12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.fhir-chips{display:flex;gap:6px;flex-wrap:wrap}.fhir-chip{font-size:11px;padding:3px 8px;border-radius:999px;background:#eef3f7;color:#24415c;border:1px solid #d3dde6}.fhir-chip.good{background:#eef7f1;color:#326646;border-color:#b8d7c2}.fhir-chip.warn{background:#fff8e6;color:#7b621b;border-color:#e7d398}.source-note{font-size:11px;color:#667085;margin-top:4px}.auto-filled{outline:2px solid #b8d7c2;outline-offset:0}.manual-needed{outline:2px solid #e7d398;outline-offset:0}
+</style>
+</head>
+<body>
+<header>
+  <div><span class="brand">COPD Sustainable Rx Assist</span><span class="sub">SMART on FHIR · GOLD 2026 · Carbon-aware v0.1</span></div>
+  <div class="header-note"><span id="authBadge">FHIR 尚未連線</span> · Clinical first, Carbon second</div>
+</header>
+<main>
+  <div class="toolbar">
+    <span class="muted">測試案例：</span>
+    <button onclick="loadPreset('initialE')">新治療・Group E</button>
+    <button onclick="loadPreset('dyspnea')">追蹤・呼吸困難</button>
+    <button onclick="loadPreset('exacerbation')">追蹤・仍有惡化</button>
+    <button onclick="loadPreset('stable')">穩定續方</button>
+    <button class="primary" onclick="reloadFHIR()">從 FHIR 重新載入</button>
+    <button onclick="evaluateNow()">重新評估</button>
+    <button class="ghost" onclick="resetForm()">清除</button>
+  </div>
+  <div class="fhir-card" id="fhirCard">
+    <div>
+      <strong style="color:#24415c">FHIR 臨床情境</strong>
+      <div class="source-note">自動帶入資料僅作決策輔助；CAT/mMRC、急性惡化分級、吸入技術與裝置能力仍需臨床確認。</div>
+    </div>
+    <div class="fhir-chips">
+      <span class="fhir-chip" id="ctxServer">Server：—</span>
+      <span class="fhir-chip" id="ctxPatient">Patient：—</span>
+      <span class="fhir-chip" id="ctxCoverage">FHIR coverage：—</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="left-panel">
+      <div class="card">
+        <h2>病人資料</h2>
+        <div class="row">
+          <div class="field">
+            <label>COPD 診斷</label>
+            <select id="copdConfirmed">
+              <option value="yes">已確認</option>
+              <option value="uncertain">待確認</option>
+              <option value="no">非 COPD</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Post-BD FEV₁/FVC</label>
+            <input id="fevRatio" type="number" step="0.01" min="0" max="1" value="0.58">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field"><label>CAT / CAAT</label><input id="cat" type="number" min="0" max="40" value="18"></div>
+          <div class="field"><label>mMRC</label><input id="mmrc" type="number" min="0" max="4" value="2"></div>
+        </div>
+
+        <div class="row">
+          <div class="field"><label>過去12月中度惡化</label><input id="modEx" type="number" min="0" max="20" value="1"></div>
+          <div class="field"><label>過去12月重度惡化</label><input id="sevEx" type="number" min="0" max="20" value="0"></div>
+        </div>
+
+        <div class="row">
+          <div class="field"><label>Blood eosinophils (cells/μL)</label><input id="eos" type="number" min="0" max="5000" value="326"></div>
+          <div class="field">
+            <label>合併 asthma</label>
+            <select id="asthma"><option value="no">否</option><option value="yes">是</option><option value="unknown">不確定</option></select>
+          </div>
+        </div>
+
+        <div class="section-title">目前維持治療</div>
+        <div class="row">
+          <div class="field">
+            <label>Current therapy</label>
+            <select id="currentTherapy">
+              <option value="none">無維持治療</option>
+              <option value="LABA">LABA</option>
+              <option value="LAMA">LAMA</option>
+              <option value="LABA/LAMA" selected>LABA/LAMA</option>
+              <option value="ICS/LABA">ICS/LABA</option>
+              <option value="ICS/LABA/LAMA">LABA/LAMA/ICS</option>
+              <option value="other">其他／無法辨識</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>最近維持藥</label>
+            <input id="currentDrug" value="Spiolto Respimat">
+          </div>
+        </div>
+
+        <div class="section-title">今天開方目的</div>
+        <div class="pills" id="reviewReasons">
+          <button class="pill-btn" data-value="initial" onclick="chooseReason(this)">新開始維持治療</button>
+          <button class="pill-btn" data-value="dyspnea" onclick="chooseReason(this)">呼吸困難</button>
+          <button class="pill-btn active" data-value="exacerbation" onclick="chooseReason(this)">仍有急性惡化</button>
+          <button class="pill-btn" data-value="stable" onclick="chooseReason(this)">穩定／續方</button>
+        </div>
+
+        <div class="section-title">開方前快速確認</div>
+        <div class="row">
+          <div class="field">
+            <label>吸入技術</label>
+            <select id="technique"><option value="good">正確</option><option value="review">需確認</option><option value="poor">明顯問題</option></select>
+          </div>
+          <div class="field">
+            <label>Adherence</label>
+            <select id="adherence"><option value="good">良好</option><option value="uncertain">不確定</option><option value="poor">不佳</option></select>
+          </div>
+        </div>
+
+        <details>
+          <summary>進階臨床資料（必要時再填）</summary>
+          <div class="row" style="margin-top:10px">
+            <div class="field"><label>FEV₁ % predicted</label><input id="fev1" type="number" min="0" max="150" value="55"></div>
+            <div class="field">
+              <label>慢性支氣管炎表現</label>
+              <select id="chronicBronchitis"><option value="no">否</option><option value="yes">是</option></select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label>吸菸狀態</label>
+              <select id="smoking"><option value="current">目前吸菸</option><option value="former" selected>已戒菸</option><option value="never">從未</option></select>
+            </div>
+            <div class="field">
+              <label>肺炎／ICS 顯著副作用</label>
+              <select id="pneumonia"><option value="no">否</option><option value="yes">是</option></select>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="card">
+        <h2>裝置能力</h2>
+        <div class="row">
+          <div class="field"><label>乾粉吸入器（DPI）</label><select id="fitDPI"><option value="yes">可使用</option><option value="unknown">未確認</option><option value="no">不適合</option></select></div>
+          <div class="field"><label>緩釋型氣霧吸入器（SMI）</label><select id="fitSMI"><option value="yes">可使用</option><option value="unknown">未確認</option><option value="no">不適合</option></select></div>
+        </div>
+        <div class="field">
+          <label>壓力定量吸入器（pMDI）</label>
+          <select id="fitPMDI"><option value="yes">可使用</option><option value="spacer">可使用，但需 spacer</option><option value="unknown">未確認</option><option value="no">不適合</option></select>
+        </div>
+        <div class="muted" style="margin-top:8px">只有當候選產品使用到該裝置時，裝置能力才影響候選排序；不以碳排取代裝置適配。</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Clinical snapshot</h2>
+        <div class="summary">
+          <div class="kpi"><small>GOLD 2026</small><strong id="goldGroup">E</strong></div>
+          <div class="kpi"><small>路徑</small><strong id="pathway">Follow-up</strong></div>
+          <div class="kpi"><small>惡化</small><strong id="exSummary">1 中度 / 0 重度</strong></div>
+          <div class="kpi"><small>Eosinophils</small><strong id="eosSummary">326</strong></div>
+        </div>
+        <div id="diagnosisNotice" class="notice hidden"></div>
+      </div>
+
+      <div class="card">
+        <h2>開方建議</h2>
+        <div id="precheckNotice" class="notice warn hidden"></div>
+        <div class="muted" id="decisionLabel">Suggested treatment class</div>
+        <div class="decision" id="decision">LABA/LAMA/ICS</div>
+        <div id="decisionSub" class="muted">Follow-up exacerbation pathway</div>
+        <ul class="reason-list" id="reasons"></ul>
+
+        <details id="advancedOptions">
+          <summary>進階選項／Why?</summary>
+          <div id="advancedContent" style="margin-top:8px"></div>
+        </details>
+      </div>
+
+      <div class="card" id="productsCard">
+        <h2>本院候選品項</h2>
+        <div class="muted" style="margin-bottom:10px">先依臨床類別與裝置適配篩選；碳排僅作候選方案間的附加資訊。年碳排以約 12 個 30-day devices/year 試算。</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>品項</th><th>Device</th><th>用法</th><th>裝置適配</th>
+                <th>估計 kg CO₂e/年</th><th>證據</th><th>院內提示</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="productRows"></tbody>
+          </table>
+        </div>
+        <div id="noProducts" class="notice hidden">目前原型沒有對應的本院候選品項。請依臨床判斷於原 CPOE 開立。</div>
+        <details>
+          <summary>碳排數值如何解讀</summary>
+          <div class="muted" style="line-height:1.6;margin-top:8px">
+            A＝直接產品/裝置 LCA；B＝產品特定估計或高度相近裝置家族代理；C＝類別代理。數值源自主檔 v0.4，並非每一品項皆為台灣產品直接量測。環境資訊不代表治療等價。
+          </div>
+        </details>
+      </div>
+
+      <div class="card hidden" id="rxCard">
+        <h2>Prescription preview</h2>
+        <div class="preview">
+          <strong id="rxName"></strong>
+          <div id="rxRegimen" style="margin-top:4px"></div>
+          <div class="muted" id="rxNote" style="margin-top:5px"></div>
+        </div>
+        <div id="rxSafety" class="notice good">本原型視為「取代目前維持吸入器」而非直接疊加，避免重複 LABA/LAMA/ICS 成分。</div>
+        <div class="footer-actions">
+          <button onclick="copySummary()">複製開方摘要</button>
+          <button onclick="window.print()">列印</button>
+          <button class="primary" onclick="showToast('原型：正式版在此回填 CPOE')">確認開立</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <details>
+          <summary>規則、資料來源與限制</summary>
+          <div style="margin-top:10px;line-height:1.65">
+            <div class="rule"><span class="dot"></span><div>GOLD 2026 initial：≥1 次中度或重度惡化＝Group E；Group B/E 首選 LABA+LAMA，Group E 且 eos ≥300 可考慮初始 triple therapy。</div></div>
+            <div class="rule"><span class="dot"></span><div>GOLD 2026 follow-up：先 review 症狀/惡化，再 assess adherence、inhaler technique 與非藥物治療，最後 adjust；主要 treatable traits 為 dyspnea 與 exacerbation。</div></div>
+            <div class="rule"><span class="dot"></span><div>合併 asthma 時，ICS 必須保留；本原型不進一步取代 asthma guideline。</div></div>
+            <div class="rule"><span class="dot"></span><div>NHS lower-carbon respiratory care：吸入器選擇需同時考慮 clinical appropriateness、environmental impact 與 patient preference。</div></div>
+            <div class="rule"><span class="dot"></span><div>本院品項與碳排：inhaler_carbon_master_v0.4_文獻分層.xlsx。正式上線前仍需完成 COPD 適應症、劑量、健保與院內限制的逐品項臨床覆核。</div></div>
+            <div class="muted" style="margin-top:8px">
+              Sources: GOLD 2026; product carbon master v0.4. SMART layer follows the existing DeepTDM EHR Launch/OAuth pattern. Advisory only：不擋單、不自動換藥、不因碳足跡凌駕臨床適切性。
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</main>
+<div id="toast"></div>
+
+<script>
+const PRODUCTS = [{"code":"1EQT04","nhi":"BC25033161","name":"Spiriva Respimat","cls":"LAMA","device":"SMI","regimen":"2 inhalations once daily","supply_days":30,"carbon_mid":0.775,"carbon_low":0.775,"carbon_high":0.78,"evidence":"A","note":"目前處方集","copd_candidate":true},{"code":"1EQA01","nhi":"BC26315143","name":"Anoro Ellipta","cls":"LABA/LAMA","device":"DPI","regimen":"1 inhalation once daily","supply_days":30,"carbon_mid":0.765,"carbon_low":0.4,"carbon_high":0.8,"evidence":"B","note":"目前處方集；Ellipta 裝置家族代理","copd_candidate":true},{"code":"1EQB02","nhi":"BC27524457","name":"Bevespi Aerosphere","cls":"LABA/LAMA","device":"pMDI","regimen":"2 inhalations twice daily","supply_days":30,"carbon_mid":17.8,"carbon_low":17.8,"carbon_high":25.3,"evidence":"B","note":"目前處方集；產品估計／研究範圍","copd_candidate":true},{"code":"1EQS08","nhi":"BC26735443","name":"Spiolto Respimat","cls":"LABA/LAMA","device":"SMI","regimen":"2 inhalations once daily","supply_days":30,"carbon_mid":0.775,"carbon_low":0.775,"carbon_high":0.784,"evidence":"B","note":"目前處方集；Respimat 裝置家族代理","copd_candidate":true},{"code":"1EQU01","nhi":"BC26301443","name":"Ultibro Breezhaler","cls":"LABA/LAMA","device":"DPI","regimen":"1 capsule inhaled once daily","supply_days":30,"carbon_mid":0.359,"carbon_low":0.184,"carbon_high":0.481,"evidence":"B","note":"限交付調劑；不自動排除","copd_candidate":true},{"code":"1EQB04","nhi":"BC28183457","name":"Breztri Aerosphere","cls":"ICS/LABA/LAMA","device":"pMDI","regimen":"2 inhalations twice daily","supply_days":30,"carbon_mid":17.8,"carbon_low":17.8,"carbon_high":17.8,"evidence":"B","note":"目前處方集；產品估計","copd_candidate":true},{"code":"1EQT05","nhi":"BC27395443","name":"Trelegy Ellipta 92/55/22","cls":"ICS/LABA/LAMA","device":"DPI","regimen":"1 inhalation once daily","supply_days":30,"carbon_mid":0.79,"carbon_low":0.4,"carbon_high":0.85,"evidence":"B","note":"目前處方集；Ellipta 裝置家族代理","copd_candidate":true},{"code":"1EQT06","nhi":"BC27672457","name":"Trimbow 100/6/12.5","cls":"ICS/LABA/LAMA","device":"pMDI","regimen":"2 inhalations twice daily","supply_days":30,"carbon_mid":14.5,"carbon_low":14.28,"carbon_high":14.5,"evidence":"A","note":"目前處方集；直接產品 LCA","copd_candidate":true},{"code":"1EQE01","nhi":"BC28049443","name":"Enerzair Breezhaler","cls":"ICS/LABA/LAMA","device":"DPI","regimen":"—","supply_days":30,"carbon_mid":0.359,"carbon_low":0.359,"carbon_high":0.481,"evidence":"A","note":"不列為 COPD 候選；需依本院/TFDA適應症覆核","copd_candidate":false},{"code":"1EQT07","nhi":"BC28240443","name":"Trelegy Ellipta 184/55/22","cls":"ICS/LABA/LAMA","device":"DPI","regimen":"—","supply_days":30,"carbon_mid":0.79,"carbon_low":0.4,"carbon_high":0.85,"evidence":"B","note":"不列為 COPD 候選；需依本院/TFDA適應症覆核","copd_candidate":false}];
+const COPD_CONFIG = {"schema_version":1,"app":"COPD Sustainable Rx Assist","version":"0.1","clinical_basis":"GOLD 2026","mode":"advisory_only","rules":{"group_E_moderate_or_severe_exacerbations":1,"group_B_CAT_threshold":10,"group_B_mMRC_threshold":2,"initial_triple_eos_threshold":300,"followup_ICS_eos_threshold":100,"ICS_deescalation_high_risk_eos_threshold":300},"fhir":{"default_direct_base":"https://thas.mohw.gov.tw/v/r4/fhir","condition_prefixes":{"copd":["J44"],"exacerbation":["J44.1"],"asthma":["J45","J46"]},"observation_codes":{"eosinophils_abs":["711-2"],"fev1_fvc_post":["69970-2"],"fev1_fvc_any":["19926-5"],"fev1_measured_predicted":["20152-5"],"smoking_status":["72166-2"],"cat_local":[],"mmrc_local":[],"peak_inspiratory_flow_local":[]},"questionnaire_text_patterns":{"cat":["CAT","CAAT"],"mmrc":["mMRC","MMRC"]}},"products":[{"code":"1EQT04","nhi":"BC25033161","name":"Spiriva Respimat","cls":"LAMA","device":"SMI","regimen":"2 inhalations once daily","supply_days":30,"carbon_mid":0.775,"carbon_low":0.775,"carbon_high":0.78,"evidence":"A","note":"目前處方集","copd_candidate":true},{"code":"1EQA01","nhi":"BC26315143","name":"Anoro Ellipta","cls":"LABA/LAMA","device":"DPI","regimen":"1 inhalation once daily","supply_days":30,"carbon_mid":0.765,"carbon_low":0.4,"carbon_high":0.8,"evidence":"B","note":"目前處方集；Ellipta 裝置家族代理","copd_candidate":true},{"code":"1EQB02","nhi":"BC27524457","name":"Bevespi Aerosphere","cls":"LABA/LAMA","device":"pMDI","regimen":"2 inhalations twice daily","supply_days":30,"carbon_mid":17.8,"carbon_low":17.8,"carbon_high":25.3,"evidence":"B","note":"目前處方集；產品估計／研究範圍","copd_candidate":true},{"code":"1EQS08","nhi":"BC26735443","name":"Spiolto Respimat","cls":"LABA/LAMA","device":"SMI","regimen":"2 inhalations once daily","supply_days":30,"carbon_mid":0.775,"carbon_low":0.775,"carbon_high":0.784,"evidence":"B","note":"目前處方集；Respimat 裝置家族代理","copd_candidate":true},{"code":"1EQU01","nhi":"BC26301443","name":"Ultibro Breezhaler","cls":"LABA/LAMA","device":"DPI","regimen":"1 capsule inhaled once daily","supply_days":30,"carbon_mid":0.359,"carbon_low":0.184,"carbon_high":0.481,"evidence":"B","note":"限交付調劑；不自動排除","copd_candidate":true},{"code":"1EQB04","nhi":"BC28183457","name":"Breztri Aerosphere","cls":"ICS/LABA/LAMA","device":"pMDI","regimen":"2 inhalations twice daily","supply_days":30,"carbon_mid":17.8,"carbon_low":17.8,"carbon_high":17.8,"evidence":"B","note":"目前處方集；產品估計","copd_candidate":true},{"code":"1EQT05","nhi":"BC27395443","name":"Trelegy Ellipta 92/55/22","cls":"ICS/LABA/LAMA","device":"DPI","regimen":"1 inhalation once daily","supply_days":30,"carbon_mid":0.79,"carbon_low":0.4,"carbon_high":0.85,"evidence":"B","note":"目前處方集；Ellipta 裝置家族代理","copd_candidate":true},{"code":"1EQT06","nhi":"BC27672457","name":"Trimbow 100/6/12.5","cls":"ICS/LABA/LAMA","device":"pMDI","regimen":"2 inhalations twice daily","supply_days":30,"carbon_mid":14.5,"carbon_low":14.28,"carbon_high":14.5,"evidence":"A","note":"目前處方集；直接產品 LCA","copd_candidate":true},{"code":"1EQE01","nhi":"BC28049443","name":"Enerzair Breezhaler","cls":"ICS/LABA/LAMA","device":"DPI","regimen":"—","supply_days":30,"carbon_mid":0.359,"carbon_low":0.359,"carbon_high":0.481,"evidence":"A","note":"不列為 COPD 候選；需依本院/TFDA適應症覆核","copd_candidate":false},{"code":"1EQT07","nhi":"BC28240443","name":"Trelegy Ellipta 184/55/22","cls":"ICS/LABA/LAMA","device":"DPI","regimen":"—","supply_days":30,"carbon_mid":0.79,"carbon_low":0.4,"carbon_high":0.85,"evidence":"B","note":"不列為 COPD 候選；需依本院/TFDA適應症覆核","copd_candidate":false}],"medication_detection":[{"local":"1EQT04","nhi":"BC25033161","name":"Spiriva Respimat","cls":"LAMA","keywords":["spiriva","tiotropium"]},{"local":"1EQA01","nhi":"BC26315143","name":"Anoro Ellipta","cls":"LABA/LAMA","keywords":["anoro","umeclidinium/vilanterol"]},{"local":"1EQB02","nhi":"BC27524457","name":"Bevespi Aerosphere","cls":"LABA/LAMA","keywords":["bevespi","glycopyrrolate/formoterol"]},{"local":"1EQS08","nhi":"BC26735443","name":"Spiolto Respimat","cls":"LABA/LAMA","keywords":["spiolto","tiotropium/olodaterol"]},{"local":"1EQU01","nhi":"BC26301443","name":"Ultibro Breezhaler","cls":"LABA/LAMA","keywords":["ultibro","indacaterol/glycopyrronium"]},{"local":"1EQB04","nhi":"BC28183457","name":"Breztri Aerosphere","cls":"ICS/LABA/LAMA","keywords":["breztri"]},{"local":"1EQT05","nhi":"BC27395443","name":"Trelegy Ellipta 92/55/22","cls":"ICS/LABA/LAMA","keywords":["trelegy"]},{"local":"1EQT06","nhi":"BC27672457","name":"Trimbow","cls":"ICS/LABA/LAMA","keywords":["trimbow"]},{"local":"1EQF06","nhi":"BC250921FL","name":"Foster MDI","cls":"ICS/LABA","keywords":["foster"]},{"local":"1EQF08","nhi":"BC268161FL","name":"Foster NEXThaler","cls":"ICS/LABA","keywords":["foster nexthaler"]},{"local":"1EQR01","nhi":"BC26318143","name":"Relvar Ellipta","cls":"ICS/LABA","keywords":["relvar"]},{"local":"1EQS03","nhi":"BC232651E7","name":"Symbicort Turbuhaler","cls":"ICS/LABA","keywords":["symbicort turbuhaler"]},{"local":"1EQS07","nhi":"BC266571E7","name":"Symbicort Rapihaler","cls":"ICS/LABA","keywords":["symbicort rapihaler"]},{"local":"1EQS02","nhi":"BC23202127","name":"Seretide Accuhaler","cls":"ICS/LABA","keywords":["seretide","accuhaler"]},{"local":"1EQS04","nhi":"BC23482137","name":"Seretide Evohaler","cls":"ICS/LABA","keywords":["seretide","evohaler"]}],"governance":["advisory only; no automatic prescribing, switching, discontinuation, or order blocking","clinical appropriateness and device suitability precede carbon comparison","FHIR-derived exacerbation counts are candidate values and require clinician confirmation","missing CAT/mMRC/device technique/adherence fields must be confirmed manually"]};
+let reviewReason = "exacerbation";
+let selectedProduct = null;
+
+function num(id, fallback=0) {
+  const v = parseFloat(document.getElementById(id).value);
+  return Number.isFinite(v) ? v : fallback;
+}
+function val(id) { return document.getElementById(id).value; }
+
+function chooseReason(btn) {
+  document.querySelectorAll("#reviewReasons .pill-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  reviewReason = btn.dataset.value;
+  updateAll();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   §  決策引擎橋接 —— 邏輯全部來自 copd_engine.js（單一來源）
+   ⚠ 不要在這裡貼判定邏輯。臨床規則改動請改 copd_rules.js。
+   ══════════════════════════════════════════════════════════════ */
+if (typeof COPD_ENGINE === "undefined") {
+  document.body.innerHTML = '<div style="padding:40px;font-family:sans-serif">'
+    + '<h2>載入失敗</h2><p>找不到 copd_engine.js / copd_rules.js / copd_products.js。</p>'
+    + '<p style="color:#666">三個檔案必須與 copd_fhir.html 同層。這是刻意的硬失敗 —— '
+    + '決策引擎缺失時顯示任何臨床判定都不安全。</p></div>';
+  throw new Error("copd_engine.js not loaded");
+}
+
+/** 從表單蒐集扁平 state。⚠ 空字串一律轉 null，絕不轉 0。 */
+function collectState() {
+  const g = id => { const el = document.getElementById(id); return el ? el.value : null; };
+  const nz = id => { const v = g(id); return (v === null || v === "") ? null : v; };
+  return {
+    copdConfirmed: g("copdConfirmed"), asthma: g("asthma"),
+    reviewReason: reviewReason, currentTherapy: g("currentTherapy"),
+    cat: nz("cat"), mmrc: nz("mmrc"), eos: nz("eos"),
+    modEx: nz("modEx"), sevEx: nz("sevEx"),
+    fev1: nz("fev1"), fevRatio: nz("fevRatio"),
+    chronicBronchitis: g("chronicBronchitis"), smoking: g("smoking"),
+    pneumonia: g("pneumonia"),
+    fitDPI: g("fitDPI"), fitSMI: g("fitSMI"), fitPMDI: g("fitPMDI"),
+    // ICS 撤除四理由 + 非藥物欄位（無此欄位時為 null，缺口檢核會提示）
+    inappropriate_start: g("icsInappropriate"), no_response: g("icsNoResponse"),
+    major_side_effects: g("icsSideEffects"),
+    considerIcsWithdrawal: g("considerIcsWithdrawal"),
+    pulmonaryRehab: g("pulmonaryRehab"),
+    vaccine_influenza: g("vacInfluenza"), vaccine_rsv: g("vacRSV"),
+    vaccine_pneumococcal: g("vacPneumo"), vaccine_covid: g("vacCovid"),
+    physical_activity: g("physicalActivity")
+  };
+}
+function calcGold() { return COPD_ENGINE.evaluate(collectState()).gold; }
+function decide()   {
+  const r = COPD_ENGINE.evaluate(collectState());
+  return { class:r.class, title:r.title, sub:r.sub, reasons:r.reasons,
+           advanced:r.advanced.map(a => a.text), _full:r };
+}
+
+function annualCarbon(p) {
+  return p.carbon_mid * (365 / p.supply_days);
+}
+
+function renderProducts(cls, allowEquivalent=false) {
+  const st = collectState();
+  const full = COPD_ENGINE.evaluate(st);
+  const tbody = document.getElementById("productRows");
+  tbody.innerHTML = "";
+
+  let target = cls;
+  if (!cls && allowEquivalent) target = st.currentTherapy;
+
+  // ⚠ 非補償性閘門：裝置適配未評估時不顯示碳排序，避免錨定
+  if (target && !full.carbonAllowed && !allowEquivalent) {
+    document.getElementById("noProducts").classList.remove("hidden");
+    document.getElementById("noProducts").textContent =
+      "裝置適配尚未評估（DPI／SMI／pMDI 三項皆為未確認）。已隱藏碳足跡排序 —— " +
+      "臨床條件未確立前不應以碳排引導選藥。請先完成裝置適配評估。";
+    return;
+  }
+
+  const list = COPD_ENGINE.candidates(target, st);
+  const noP = document.getElementById("noProducts");
+  noP.classList.toggle("hidden", list.length > 0);
+  if (!list.length) noP.textContent = "目前沒有符合此臨床類別的院內候選品項。";
+
+  list.forEach(p => {
+    const c = p.carbon;
+    let carbonCell, bandCell;
+    if (!c.known) {
+      carbonCell = '<span class="tag warn">配方未確認</span>' +
+                   '<div class="muted">' + escHtml(c.note) + '</div>';
+      bandCell = '<span class="muted">—</span>';
+    } else {
+      carbonCell = '<span class="carbon">' + c.perYear.toFixed(1) + '</span>' +
+        '<div class="muted">' + c.perDeviceLow.toFixed(2) + '–' + c.perDeviceHigh.toFixed(2) + ' / device</div>';
+      bandCell = '<span class="tag ' + c.band.cls + '">' + c.band.label + '</span>' +
+        (c.propellant && c.propellant !== "—" ? '<div class="muted">' + escHtml(c.propellant) + '</div>' : '');
+    }
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td><strong>' + escHtml(p.name) + '</strong><div class="muted">' + p.code +
+        ' · NHI ' + (p.nhi || '—') + '</div></td>' +
+      '<td><span class="tag">' + p.device + '</span></td>' +
+      '<td>' + escHtml(p.regimen) + '</td>' +
+      '<td><span class="tag ' + p.fit.cls + '">' + p.fit.label + '</span></td>' +
+      '<td>' + bandCell + '</td>' +
+      '<td>' + carbonCell + '</td>' +
+      '<td class="muted">' + escHtml(p.note || (c.source || '')) + '</td>' +
+      '<td><button ' + (p.fit.rank >= 4 ? 'disabled' : '') +
+        ' onclick="selectProduct(\'' + p.code + '\')">選擇</button></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function selectProduct(code) {
+  selectedProduct = PRODUCTS.find(p=>p.code===code);
+  if (!selectedProduct) return;
+  document.getElementById("rxCard").classList.remove("hidden");
+  document.getElementById("rxName").textContent = selectedProduct.name;
+  document.getElementById("rxRegimen").textContent = selectedProduct.regimen;
+  document.getElementById("rxNote").textContent =
+    `${selectedProduct.cls} · ${selectedProduct.device} · 約 ${annualCarbon(selectedProduct).toFixed(1)} kg CO₂e/year · Evidence ${selectedProduct.evidence}`;
+  document.getElementById("rxCard").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function updateAll() {
+  const gold = calcGold();
+  const d = decide();
+  const current = val("currentTherapy");
+  const initial = reviewReason==="initial" || current==="none";
+
+  document.getElementById("goldGroup").textContent = gold;
+  document.getElementById("pathway").textContent = initial ? "Initial" : "Follow-up";
+  document.getElementById("exSummary").textContent = `${num("modEx")} 中度 / ${num("sevEx")} 重度`;
+  document.getElementById("eosSummary").textContent = `${num("eos")}`;
+  document.getElementById("decision").textContent = d.title;
+  document.getElementById("decisionSub").textContent = d.sub;
+  document.getElementById("reasons").innerHTML = d.reasons.map(x=>`<li>${x}</li>`).join("");
+  const F = d._full;
+  const gapHtml = (F.gaps || []).map(g =>
+    '<div class="rule"><span class="dot"></span><div><strong>' + escHtml(g.label) + '</strong>：' +
+    escHtml(g.text) + '</div></div>').join("");
+  const dgHtml = (F.dataGaps || []).map(x =>
+    '<div class="notice warn" style="margin:6px 0">' + escHtml(x) + '</div>').join("");
+  let host = document.getElementById("engineExtras");
+  if (!host) {
+    host = document.createElement("div"); host.id = "engineExtras";
+    document.getElementById("advancedContent").parentNode.appendChild(host);
+  }
+  host.innerHTML = dgHtml +
+    (gapHtml ? '<div style="margin-top:10px"><strong>非藥物與預防缺口</strong>' + gapHtml + '</div>' : '') +
+    (COPD_RULES.provenance.verified_date ? '' :
+      '<div class="notice danger" style="margin-top:10px">規則包尚未經胸腔科醫師核對簽核，目前僅供測試，不得用於臨床決策。</div>');
+
+  document.getElementById("advancedContent").innerHTML = d.advanced.length
+    ? d.advanced.map(x=>`<div class="rule"><span class="dot"></span><div>${x}</div></div>`).join("")
+    : '<div class="muted">目前沒有額外進階建議。</div>';
+
+  const diag = document.getElementById("diagnosisNotice");
+  const ratio = num("fevRatio", NaN);
+  const confirmed = val("copdConfirmed");
+  if (confirmed !== "yes") {
+    diag.className = "notice danger";
+    diag.textContent = "COPD 診斷尚未確認；系統暫不提供正式維持治療建議。";
+  } else if (Number.isFinite(ratio) && ratio >= 0.7) {
+    diag.className = "notice warn";
+    diag.textContent = "目前輸入的 post-BD FEV₁/FVC ≥0.70，與傳統固定比值 COPD 診斷門檻不一致；請確認肺功能與診斷。";
+  } else {
+    diag.className = "notice hidden";
+  }
+
+  const pre = document.getElementById("precheckNotice");
+  const issues = [];
+  if (val("technique") !== "good") issues.push("吸入技術尚未確認／有問題");
+  if (val("adherence") !== "good") issues.push("adherence 尚未確認／不佳");
+  if (issues.length && !initial) {
+    pre.className = "notice warn";
+    pre.textContent = "調整藥物前先處理：" + issues.join("、") + "。";
+  } else {
+    pre.className = "notice warn hidden";
+  }
+
+  renderProducts(d.class, false);
+  document.getElementById("productsCard").classList.toggle("hidden", !d.class);
+  if (!d.class && reviewReason==="stable" && current!=="none") {
+    document.getElementById("productsCard").classList.remove("hidden");
+    renderProducts(null, true);
+  }
+  selectedProduct = null;
+  document.getElementById("rxCard").classList.add("hidden");
+}
+
+function copySummary() {
+  const d = decide();
+  const p = selectedProduct;
+  const text = [
+    "COPD treatment review",
+    `GOLD ${calcGold()}; pathway: ${reviewReason==="initial"||val("currentTherapy")==="none"?"Initial":"Follow-up"}`,
+    `Exacerbations (12 months): moderate ${num("modEx")}, severe ${num("sevEx")}`,
+    `Blood eosinophils: ${num("eos")} cells/μL`,
+    `Current therapy: ${val("currentTherapy")}`,
+    `Suggested treatment: ${d.title}`,
+    p ? `Selected: ${p.name} — ${p.regimen}` : "",
+    p ? `Estimated carbon: ${annualCarbon(p).toFixed(1)} kg CO₂e/year (Evidence ${p.evidence})` : ""
+  ].filter(Boolean).join("\n");
+  navigator.clipboard?.writeText(text).then(()=>showToast("已複製開方摘要")).catch(()=>showToast("瀏覽器不允許自動複製"));
+}
+
+function showToast(msg) {
+  const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block";
+  setTimeout(()=>t.style.display="none",2200);
+}
+
+function loadPreset(name) {
+  const presets = {
+    initialE: {reason:"initial",currentTherapy:"none",currentDrug:"",cat:16,mmrc:2,modEx:1,sevEx:0,eos:180,asthma:"no",technique:"review",adherence:"uncertain",fevRatio:0.61,fev1:62},
+    dyspnea: {reason:"dyspnea",currentTherapy:"LAMA",currentDrug:"Spiriva Respimat",cat:19,mmrc:3,modEx:0,sevEx:0,eos:90,asthma:"no",technique:"good",adherence:"good",fevRatio:0.55,fev1:58},
+    exacerbation: {reason:"exacerbation",currentTherapy:"LABA/LAMA",currentDrug:"Spiolto Respimat",cat:18,mmrc:2,modEx:1,sevEx:0,eos:326,asthma:"no",technique:"good",adherence:"good",fevRatio:0.58,fev1:55},
+    stable: {reason:"stable",currentTherapy:"LABA/LAMA",currentDrug:"Anoro Ellipta",cat:7,mmrc:1,modEx:0,sevEx:0,eos:120,asthma:"no",technique:"good",adherence:"good",fevRatio:0.60,fev1:68}
+  };
+  const p=presets[name];
+  Object.entries(p).forEach(([k,v])=>{
+    if(k==="reason") return;
+    const el=document.getElementById(k);
+    if(el) el.value=v;
+  });
+  reviewReason=p.reason;
+  document.querySelectorAll("#reviewReasons .pill-btn").forEach(b=>b.classList.toggle("active", b.dataset.value===reviewReason));
+  updateAll();
+}
+
+function resetForm() {
+  document.getElementById("copdConfirmed").value="yes";
+  document.getElementById("fevRatio").value="0.58";
+  document.getElementById("cat").value="0";
+  document.getElementById("mmrc").value="0";
+  document.getElementById("modEx").value="0";
+  document.getElementById("sevEx").value="0";
+  document.getElementById("eos").value="";
+  document.getElementById("asthma").value="no";
+  document.getElementById("currentTherapy").value="none";
+  document.getElementById("currentDrug").value="";
+  document.getElementById("technique").value="review";
+  document.getElementById("adherence").value="uncertain";
+  reviewReason="initial";
+  document.querySelectorAll("#reviewReasons .pill-btn").forEach(b=>b.classList.toggle("active", b.dataset.value===reviewReason));
+  updateAll();
+}
+
+
+
+// ─────────────────────────────────────────────────────────────
+// SMART on FHIR integration layer
+// Reuses the DeepTDM deployment pattern: SMART EHR Launch + OAuth2 + direct test mode.
+// Clinical rule engine remains deterministic and advisory-only.
+// ─────────────────────────────────────────────────────────────
+let SMART_CLIENT=null;
+let _pid=null;
+let _fhirDebug={};
+
+function escHtml(s){return String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function setField(id,v,auto=true){
+  if(v===null||v===undefined||v===""||Number.isNaN(v))return false;
+  const el=document.getElementById(id); if(!el)return false;
+  el.value=String(v); if(auto){el.classList.add("auto-filled");el.classList.remove("manual-needed")}
+  return true;
+}
+function markManual(id){const el=document.getElementById(id);if(el&&!el.classList.contains("auto-filled"))el.classList.add("manual-needed")}
+function getCodes(r){
+  const cc=r?.code?.coding||r?.medicationCodeableConcept?.coding||[];
+  return cc.map(c=>String(c.code||"").toUpperCase()).filter(Boolean);
+}
+function getDisplay(r){
+  const cc=r?.medicationCodeableConcept;
+  return [cc?.text,...(cc?.coding||[]).map(c=>c.display||"")].join(" ").toLowerCase();
+}
+function obsTime(o){return o.effectiveDateTime||o.effectivePeriod?.start||o.issued||null}
+function hasCode(r,codes){return (r?.code?.coding||[]).some(c=>codes.includes(String(c.code||"")))}
+function latestObs(obs,codes){
+  const m=(obs||[]).filter(o=>hasCode(o,codes)).sort((a,b)=>String(obsTime(b)||"").localeCompare(String(obsTime(a)||"")));
+  return m[0]||null;
+}
+function obsValue(o){
+  if(!o)return null;
+  if(o.valueQuantity?.value!=null)return {value:+o.valueQuantity.value,unit:o.valueQuantity.unit||o.valueQuantity.code||"",text:String(o.valueQuantity.value)};
+  if(o.valueInteger!=null)return {value:+o.valueInteger,unit:"",text:String(o.valueInteger)};
+  if(o.valueDecimal!=null)return {value:+o.valueDecimal,unit:"",text:String(o.valueDecimal)};
+  if(o.valueCodeableConcept){const t=o.valueCodeableConcept.text||o.valueCodeableConcept.coding?.[0]?.display||o.valueCodeableConcept.coding?.[0]?.code;return {value:null,unit:"",text:t||""}}
+  if(o.valueString!=null)return {value:null,unit:"",text:o.valueString};
+  return null;
+}
+function normalizeEos(v){
+  if(!v||v.value==null)return null;
+  let x=+v.value, u=(v.unit||"").toLowerCase();
+  // 10^9/L or 10*3/uL numerically equals 1000 cells/uL per unit.
+  if(u.includes("10^9/l")||u.includes("10*9/l")||u.includes("10*3/ul")||u.includes("10^3/ul")||u.includes("k/ul")) x*=1000;
+  return x;
+}
+function normalizeRatio(v){
+  if(!v||v.value==null)return null; let x=+v.value;
+  if(x>1.5)x/=100; return x;
+}
+function normalizePercent(v){
+  if(!v||v.value==null)return null; let x=+v.value;
+  if(x<=2)x*=100; return x;
+}
+function codingStarts(r,prefixes){
+  return (r?.code?.coding||[]).some(c=>prefixes.some(p=>String(c.code||"").toUpperCase().startsWith(p)));
+}
+function resourceDate(r){return r.onsetDateTime||r.recordedDate||r.assertedDate||r.period?.start||r.authoredOn||null}
+function withinDays(a,b,days){if(!a||!b)return false;return Math.abs(new Date(a)-new Date(b))<=days*864e5}
+function severeEncounter(e){
+  const c=String(e?.class?.code||"").toUpperCase();
+  const t=[e?.class?.display,...(e?.type||[]).flatMap(x=>[x.text,...(x.coding||[]).map(c=>c.display||c.code)])].join(" ").toLowerCase();
+  return ["EMER","IMP","ACUTE"].includes(c)||/emergency|inpatient|急診|住院/.test(t);
+}
+function deriveExacerbations(conditions,encounters){
+  const cutoff=Date.now()-365.25*864e5;
+  const ex=(conditions||[]).filter(c=>codingStarts(c,COPD_CONFIG.fhir.condition_prefixes.exacerbation)).map(c=>({date:resourceDate(c),condition:c})).filter(x=>x.date&&new Date(x.date).getTime()>=cutoff);
+  const uniq=[];ex.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(x=>{if(!uniq.length||!withinDays(uniq[uniq.length-1].date,x.date,7))uniq.push(x)});
+  let moderate=0,severe=0;
+  uniq.forEach(x=>{const sev=(encounters||[]).some(e=>resourceDate(e)&&withinDays(resourceDate(e),x.date,3)&&severeEncounter(e));if(sev)severe++;else moderate++});
+  return {moderate,severe,events:uniq.length,method:"J44.1 + encounter proximity; clinician confirmation required"};
+}
+function mapSmoking(o){
+  const v=obsValue(o); if(!v)return null; const t=(v.text||"").toLowerCase();
+  const codes=(o?.valueCodeableConcept?.coding||[]).map(c=>c.code);
+  if(codes.includes("LA15920-4")||/former|ex-smoker|已戒|曾吸/.test(t))return "former";
+  if(codes.includes("LA18978-9")||/never|從未|不吸/.test(t))return "never";
+  if(codes.includes("LA18976-3")||codes.includes("LA18977-1")||/current|smoker|目前吸/.test(t))return "current";
+  return null;
+}
+function qrNumericAnswer(item){
+  for(const a of item?.answer||[]){
+    if(a.valueInteger!=null)return +a.valueInteger;if(a.valueDecimal!=null)return +a.valueDecimal;
+    if(a.valueQuantity?.value!=null)return +a.valueQuantity.value;
+    if(a.valueString!=null&&!isNaN(parseFloat(a.valueString)))return parseFloat(a.valueString);
+  } return null;
+}
+function scanQR(qrs,patterns){
+  const pats=patterns.map(x=>x.toLowerCase()); let found=null;
+  function walk(items){for(const it of items||[]){const txt=((it.text||"")+" "+(it.linkId||"")).toLowerCase();if(pats.some(p=>txt.includes(p.toLowerCase()))){const n=qrNumericAnswer(it);if(n!=null)found=n}walk(it.item);for(const a of it.answer||[])walk(a.item)}}
+  (qrs||[]).sort((a,b)=>String(b.authored||"").localeCompare(String(a.authored||""))).forEach(q=>{if(found==null)walk(q.item)});return found;
+}
+function detectMedication(req){
+  const codes=getCodes(req),disp=getDisplay(req);
+  return COPD_CONFIG.medication_detection.find(m=>codes.includes(m.local.toUpperCase())||codes.includes(m.nhi.toUpperCase())||(m.keywords||[]).some(k=>disp.includes(k.toLowerCase())))||null;
+}
+function activeMed(req){return !["cancelled","entered-in-error","stopped"].includes(String(req?.status||"").toLowerCase())}
+function deriveTherapy(meds){
+  const matches=(meds||[]).filter(activeMed).map(r=>({r,m:detectMedication(r)})).filter(x=>x.m).sort((a,b)=>String(b.r.authoredOn||"").localeCompare(String(a.r.authoredOn||"")));
+  if(!matches.length)return {therapy:"none",names:[],matches:[]};
+  const comps=new Set();matches.forEach(x=>x.m.cls.split("/").forEach(c=>comps.add(c)));
+  let therapy="other";
+  if(comps.has("ICS")&&comps.has("LABA")&&comps.has("LAMA"))therapy="ICS/LABA/LAMA";
+  else if(comps.has("LABA")&&comps.has("LAMA"))therapy="LABA/LAMA";
+  else if(comps.has("ICS")&&comps.has("LABA"))therapy="ICS/LABA";
+  else if(comps.has("LAMA"))therapy="LAMA"; else if(comps.has("LABA"))therapy="LABA";
+  return {therapy,names:[...new Set(matches.map(x=>x.m.name))],matches};
+}
+async function tryRequests(client,queries){for(const q of queries){try{const r=await client.request(q,{flat:true});const l=Array.isArray(r)?r:(r?.entry||[]).map(e=>e.resource);if(l){_fhirDebug.lastQuery=q;return l.filter(Boolean)}}catch(e){_fhirDebug.errors=(_fhirDebug.errors||[]).concat(String(e.message||e))}}return[]}
+async function fetchFHIR(client,pid){
+  const allObs=Object.values(COPD_CONFIG.fhir.observation_codes).flat().filter(Boolean);
+  const cp=allObs.map(c=>"http://loinc.org|"+c).join(",");
+  const obs=await tryRequests(client,[`Observation?patient=${pid}&code=${encodeURIComponent(cp)}&_count=300&_sort=-date`,`Observation?patient=${pid}&_count=500&_sort=-date`]);
+  const meds=await tryRequests(client,[`MedicationRequest?patient=${pid}&_count=200&_sort=-authored`,`MedicationRequest?patient=${pid}&_count=200`]);
+  const conditions=await tryRequests(client,[`Condition?patient=${pid}&_count=300`,`Condition?subject=Patient/${pid}&_count=300`]);
+  const encounters=await tryRequests(client,[`Encounter?patient=${pid}&_count=300&_sort=-date`,`Encounter?patient=${pid}&_count=300`]);
+  const qrs=await tryRequests(client,[`QuestionnaireResponse?subject=Patient/${pid}&_count=50&_sort=-authored`,`QuestionnaireResponse?patient=${pid}&_count=50`]);
+  return {obs,meds,conditions,encounters,qrs};
+}
+function applyFHIR(pt,data){
+  let got=0,total=9;
+  const copdCond=data.conditions.some(c=>codingStarts(c,COPD_CONFIG.fhir.condition_prefixes.copd));
+  const asthmaCond=data.conditions.some(c=>codingStarts(c,COPD_CONFIG.fhir.condition_prefixes.asthma));
+  const ratioPost=normalizeRatio(obsValue(latestObs(data.obs,COPD_CONFIG.fhir.observation_codes.fev1_fvc_post)));
+  const ratioAny=normalizeRatio(obsValue(latestObs(data.obs,COPD_CONFIG.fhir.observation_codes.fev1_fvc_any)));
+  const ratio=ratioPost??ratioAny;
+  if(ratio!=null){setField("fevRatio",ratio.toFixed(2));got++}
+  if(copdCond&&ratio!=null&&ratio<0.7){setField("copdConfirmed","yes");got++}
+  else if(copdCond||ratio!=null){setField("copdConfirmed","uncertain");got++}
+  else markManual("copdConfirmed");
+  if(asthmaCond){setField("asthma","yes");got++}else{setField("asthma","no");got++}
+  const eos=normalizeEos(obsValue(latestObs(data.obs,COPD_CONFIG.fhir.observation_codes.eosinophils_abs)));
+  if(eos!=null){setField("eos",Math.round(eos));got++}else markManual("eos");
+  const fev1=normalizePercent(obsValue(latestObs(data.obs,COPD_CONFIG.fhir.observation_codes.fev1_measured_predicted)));
+  if(fev1!=null){setField("fev1",Math.round(fev1));got++}
+  const smoke=mapSmoking(latestObs(data.obs,COPD_CONFIG.fhir.observation_codes.smoking_status));if(smoke){setField("smoking",smoke);got++}
+  const cat=scanQR(data.qrs,COPD_CONFIG.fhir.questionnaire_text_patterns.cat);if(cat!=null){setField("cat",cat);got++}else markManual("cat");
+  const mmrc=scanQR(data.qrs,COPD_CONFIG.fhir.questionnaire_text_patterns.mmrc);if(mmrc!=null){setField("mmrc",mmrc);got++}else markManual("mmrc");
+  const ex=deriveExacerbations(data.conditions,data.encounters);if(ex.events>0){setField("modEx",ex.moderate);setField("sevEx",ex.severe);got++}else{markManual("modEx");markManual("sevEx")}
+  const th=deriveTherapy(data.meds);if(th.matches.length){setField("currentTherapy",th.therapy);setField("currentDrug",th.names.join(" + "));got++}else{setField("currentTherapy","none");}
+  // infer workflow only as a default; clinician can override
+  if(th.therapy==="none") reviewReason="initial";
+  else if(ex.moderate+ex.severe>=1) reviewReason="exacerbation";
+  else if((cat??0)>=10||(mmrc??0)>=2) reviewReason="dyspnea"; else reviewReason="stable";
+  document.querySelectorAll("#reviewReasons .pill-btn").forEach(b=>b.classList.toggle("active",b.dataset.value===reviewReason));
+  ["technique","adherence","fitDPI","fitSMI","fitPMDI"].forEach(markManual);
+  document.getElementById("ctxCoverage").textContent=`FHIR coverage：${got}/${total}`;
+  document.getElementById("ctxCoverage").className="fhir-chip "+(got>=7?"good":got>=4?"warn":"");
+  _fhirDebug.derived={copdCond,asthmaCond,ratio,eos,fev1,cat,mmrc,exacerbations:ex,therapy:th};
+  updateAll();
+}
+async function runFHIR(client){
+  if(!_pid)return;
+  document.getElementById("authBadge").textContent="FHIR 讀取中…";
+  try{
+    const pt=await client.request(`Patient/${_pid}`);
+    const nm=pt?.name?.[0];const name=nm?.text||[nm?.family,...(nm?.given||[])].filter(Boolean).join(" ")||_pid;
+    document.getElementById("ctxPatient").textContent=`Patient：${name} (${_pid})`;
+    const data=await fetchFHIR(client,_pid);applyFHIR(pt,data);
+    document.getElementById("authBadge").textContent="FHIR 已連線";
+    _fhirDebug.patient=pt;_fhirDebug.counts={obs:data.obs.length,meds:data.meds.length,conditions:data.conditions.length,encounters:data.encounters.length,qrs:data.qrs.length};
+  }catch(e){document.getElementById("authBadge").textContent="FHIR 讀取失敗";showToast("FHIR 讀取失敗："+(e.message||e));_fhirDebug.fatal=String(e.message||e)}
+}
+async function reloadFHIR(){if(SMART_CLIENT&&_pid)await runFHIR(SMART_CLIENT);else showToast("尚未建立 FHIR client")}
+function evaluateNow(){updateAll();showToast("已依目前欄位重新評估")}
+function makeDirectClient(base){return{request:async(q,opts)=>{const u=q.startsWith("http")?q:base.replace(/\/$/,"")+"/"+q.replace(/^\//,"");const r=await fetch(u,{headers:{Accept:"application/fhir+json"}});if(!r.ok)throw new Error("HTTP "+r.status+" "+u);const j=await r.json();return opts?.flat&&j.resourceType==="Bundle"?(j.entry||[]).map(e=>e.resource):j}}}
+async function initSMART(){
+  const qs=new URLSearchParams(location.search);
+  if(qs.get("direct")==="1"){
+    const base=qs.get("iss")||COPD_CONFIG.fhir.default_direct_base;_pid=qs.get("patient")||"copd-test-001";SMART_CLIENT=makeDirectClient(base);
+    document.getElementById("ctxServer").textContent="Server："+base;document.getElementById("authBadge").textContent="FHIR 直連測試";await runFHIR(SMART_CLIENT);return;
+  }
+  try{
+    const client=await FHIR.oauth2.ready();SMART_CLIENT=client;_pid=qs.get("patient")||client.patient?.id;
+    const base=client.state?.serverUrl||"—";document.getElementById("ctxServer").textContent="Server："+base;
+    if(!_pid){document.getElementById("authBadge").textContent="未取得 patient context";return}
+    await runFHIR(client);
+  }catch(e){document.getElementById("authBadge").textContent="SMART 尚未啟動";_fhirDebug.oauth=String(e.message||e)}
+}
+
+document.querySelectorAll("input,select").forEach(el=>el.addEventListener("change",updateAll));
+updateAll();
+initSMART();
+</script>
+</body>
+</html>
