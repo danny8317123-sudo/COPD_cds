@@ -248,7 +248,7 @@ input[type=range]{padding:0;border:0;accent-color:var(--gold-strong)}
 
 <!-- ============ 碳排圖譜 ============ -->
 <section id="p-atlas" role="tabpanel" aria-labelledby="t-atlas" hidden>
-  <div class="eyebrow">健保 2025｜76 項手持吸入器（v5.4 EF 稽核版）</div>
+  <div class="eyebrow">健保 2025｜手持吸入器 75 項有申報或係數紀錄（v5.4 EF 稽核版）</div>
   <h2>碳排集中在少數 pMDI，替代選項多半就在同成分</h2>
   <p class="lede">每一列是一個健保品項。點開可看到同成分、同治療類別的低碳劑型，以及若 10% 改用時全國每年可減少的量。數值為申報醫令量估算，不代表個別病人換藥建議。</p>
   <div class="two">
@@ -555,33 +555,33 @@ return {
       regimen:'2 inhalations once daily', actuations_per_device:60, actuations_per_day:2,
       copd_candidate:true, local_supply_formulation:'std',
       formulations:[{ id:'std', propellant:'—（SMI 無推進劑）', carbon_low:0.775, carbon_mid:0.775, carbon_high:0.78,
-        status:'current', evidence:'A', source:'⚠ 待補引用' }] },
+        status:'current', evidence:'A', source:'直接產品／裝置 LCA（PMC6822840）', source_url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC6822840/' }] },
 
     // ── LABA/LAMA ──
     { code:'1EQA01', nhi:'BC26315143', name:'Anoro Ellipta', cls:'LABA/LAMA', device:'DPI', resistance:'medium', pif_min:30, pif_opt:60,
       regimen:'1 inhalation once daily', actuations_per_device:30, actuations_per_day:1,
       copd_candidate:true, local_supply_formulation:'std',
       formulations:[{ id:'std', propellant:'—（DPI 無推進劑）', carbon_low:0.4, carbon_mid:0.765, carbon_high:0.8,
-        status:'current', evidence:'B', source:'⚠ 待補引用；Ellipta 裝置家族代理值' }] },
+        status:'current', evidence:'B', source:'Ellipta 裝置家族代理（ERJ 2022;60:2102106）', source_url:'https://publications.ersnet.org/content/erj/60/1/2102106' }] },
 
     { code:'1EQS08', nhi:'BC26735443', name:'Spiolto Respimat', cls:'LABA/LAMA', device:'SMI',
       regimen:'2 inhalations once daily', actuations_per_device:60, actuations_per_day:2,
       copd_candidate:true, local_supply_formulation:'std',
       formulations:[{ id:'std', propellant:'—（SMI 無推進劑）', carbon_low:0.775, carbon_mid:0.775, carbon_high:0.784,
-        status:'current', evidence:'B', source:'⚠ 待補引用；Respimat 裝置家族代理值' }] },
+        status:'current', evidence:'B', source:'Respimat 裝置家族代理（PMC6822840）', source_url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC6822840/' }] },
 
     { code:'1EQU01', nhi:'BC26301443', name:'Ultibro Breezhaler', cls:'LABA/LAMA', device:'DPI', resistance:'low', pif_min:30, pif_opt:60,
       regimen:'1 capsule inhaled once daily', actuations_per_device:30, actuations_per_day:1,
       copd_candidate:true, local_supply_formulation:'std', note:'限交付調劑',
       formulations:[{ id:'std', propellant:'—（DPI 無推進劑）', carbon_low:0.184, carbon_mid:0.359, carbon_high:0.481,
-        status:'current', evidence:'B', source:'⚠ 待補引用' }] },
+        status:'current', evidence:'B', source:'Breezhaler 裝置家族代理（Sustainability 2021;13:6657）', source_url:'https://www.mdpi.com/2071-1050/13/12/6657' }] },
 
     { code:'1EQB02', nhi:'BC27524457', name:'Bevespi Aerosphere', cls:'LABA/LAMA', device:'pMDI',
       regimen:'2 inhalations twice daily', actuations_per_device:120, actuations_per_day:4,
-      copd_candidate:true, local_supply_formulation:null,   // ⚠ 待藥劑部確認
+      copd_candidate:true, local_supply_formulation:'hfa134a', // 2026-10-22：國內現行供應尚未換代，採 HFA-134a；換代時改指向新配方 id
       formulations:[
         { id:'hfa134a', propellant:'HFA-134a', carbon_low:17.8, carbon_mid:17.8, carbon_high:25.3,
-          status:'current', evidence:'B', source:'⚠ 待補引用' },
+          status:'current', evidence:'B', source:'產品估計／研究範圍（JAMA）', source_url:'https://jamanetwork.com/journals/jama/fullarticle/2822997' },
         { id:'hfo1234ze', propellant:'HFO-1234ze', carbon_low:null, carbon_mid:null, carbon_high:null,
           status:'in_transition', evidence:null,
           source:'AstraZeneca 產品線轉換中（廠商聲稱 GWP 影響低 99.9%，非獨立 LCA）' }
@@ -592,14 +592,14 @@ return {
       regimen:'1 inhalation once daily', actuations_per_device:30, actuations_per_day:1,
       copd_candidate:true, local_supply_formulation:'std',
       formulations:[{ id:'std', propellant:'—（DPI 無推進劑）', carbon_low:0.4, carbon_mid:0.79, carbon_high:0.85,
-        status:'current', evidence:'B', source:'⚠ 待補引用；Ellipta 裝置家族代理值' }] },
+        status:'current', evidence:'B', source:'Ellipta 裝置家族代理（JAMA）', source_url:'https://jamanetwork.com/journals/jama/fullarticle/2822997' }] },
 
     { code:'1EQB04', nhi:'BC28183457', name:'Breztri Aerosphere', cls:'ICS/LABA/LAMA', device:'pMDI',
       regimen:'2 inhalations twice daily', actuations_per_device:120, actuations_per_day:4,
-      copd_candidate:true, local_supply_formulation:null,   // ⚠ 待藥劑部確認
+      copd_candidate:true, local_supply_formulation:'hfa134a', // 2026-10-22：國內現行供應尚未換代，採 HFA-134a；換代時改指向新配方 id
       formulations:[
         { id:'hfa134a', propellant:'HFA-134a', carbon_low:17.8, carbon_mid:17.8, carbon_high:17.8,
-          status:'current', evidence:'B', source:'⚠ 待補引用' },
+          status:'current', evidence:'B', source:'產品估計，HFA-134a（JAMA）', source_url:'https://jamanetwork.com/journals/jama/fullarticle/2822997' },
         { id:'hfo1234ze', propellant:'HFO-1234ze', carbon_low:null, carbon_mid:null, carbon_high:null,
           status:'in_transition', evidence:null,
           source:'AstraZeneca 已完成支持轉換之臨床試驗計畫（2024）；本院供應狀態待確認' }
@@ -607,10 +607,10 @@ return {
 
     { code:'1EQT06', nhi:'BC27672457', name:'Trimbow 100/6/12.5', cls:'ICS/LABA/LAMA', device:'pMDI',
       regimen:'2 inhalations twice daily', actuations_per_device:120, actuations_per_day:4,
-      copd_candidate:true, local_supply_formulation:null,   // ⚠ 待藥劑部確認
+      copd_candidate:true, local_supply_formulation:'hfa134a', // 2026-10-22：國內現行供應尚未換代，採 HFA-134a；換代時改指向新配方 id
       formulations:[
         { id:'hfa134a', propellant:'HFA-134a', carbon_low:14.28, carbon_mid:14.5, carbon_high:14.5,
-          status:'current', evidence:'A', source:'直接產品 LCA ⚠ 待補完整引用' },
+          status:'current', evidence:'A', source:'直接產品 LCA（PMC7173981）', source_url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC7173981/' },
         { id:'hfa152a', propellant:'HFA-152a', carbon_low:null, carbon_mid:null, carbon_high:null,
           status:'in_transition', evidence:null,
           source:'AAPS PharmSciTech 2025：與 HFA-134a 版本效能可比性已發表；本院供應狀態待確認' }
@@ -622,14 +622,14 @@ return {
       copd_candidate:false, note:'不列為 COPD 候選；需依本院/TFDA 適應症覆核',
       local_supply_formulation:'std',
       formulations:[{ id:'std', propellant:'—', carbon_low:0.359, carbon_mid:0.359, carbon_high:0.481,
-        status:'current', evidence:'A', source:'⚠ 待補引用' }] },
+        status:'current', evidence:'A', source:'直接裝置產品 LCA（Sustainability 2021;13:6657）', source_url:'https://www.mdpi.com/2071-1050/13/12/6657' }] },
 
     { code:'1EQT07', nhi:'BC28240443', name:'Trelegy Ellipta 184/55/22', cls:'ICS/LABA/LAMA', device:'DPI', resistance:'medium', pif_min:30, pif_opt:60,
       regimen:'—', actuations_per_device:30, actuations_per_day:1,
       copd_candidate:false, note:'不列為 COPD 候選；需依本院/TFDA 適應症覆核',
       local_supply_formulation:'std',
       formulations:[{ id:'std', propellant:'—', carbon_low:0.4, carbon_mid:0.79, carbon_high:0.85,
-        status:'current', evidence:'B', source:'⚠ 待補引用' }] }
+        status:'current', evidence:'B', source:'Ellipta 裝置家族代理（JAMA）', source_url:'https://jamanetwork.com/journals/jama/fullarticle/2822997' }] }
   ],
 
   // 藥物辨識：ATC 不足時以本院碼／健保碼／關鍵字三層備援
