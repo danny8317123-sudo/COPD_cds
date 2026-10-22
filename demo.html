@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>COPD Sustainable Rx Assist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap">
+<style>[hidden]{display:none!important}img{max-width:100%}
+/* Layout: sticky navy masthead with segmented tabs; one working surface per tab; data rows to scale, gold marks what saves carbon. */
+:root{
+  --bg:#F5F7F9; --surface:#FFFFFF; --sunk:#EDF1F4; --ink:#0D1F2D; --muted:#5A6876; --line:#D8DFE6;
+  --mast:#051C2C; --mast-ink:#F2F5F8; --mast-muted:#9DB0C0;
+  --gold:#9A7626; --gold-strong:#A8832F; --gold-soft:#F4ECD8;
+  --ok:#2C7A57; --ok-soft:#E3F1EA; --warn:#B4233A; --warn-soft:#FBE7EA; --amber:#8A6512; --amber-soft:#FBF1D9;
+  --bar:#0D2B40; --bar-soft:#B9C5D0;
+  --f-display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --f-body:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A131A; --surface:#111D27; --sunk:#16242F; --ink:#E6ECF1; --muted:#97A6B3; --line:#243543;
+  --mast:#030D14; --mast-ink:#EEF2F5; --mast-muted:#8DA2B3;
+  --gold:#D9B868; --gold-strong:#C9A24E; --gold-soft:#2E2715;
+  --ok:#74C9A0; --ok-soft:#11291F; --warn:#F28B9A; --warn-soft:#361820; --amber:#E7C06A; --amber-soft:#2E2512;
+  --bar:#7FA3BF; --bar-soft:#2E4252; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0A131A; --surface:#111D27; --sunk:#16242F; --ink:#E6ECF1; --muted:#97A6B3; --line:#243543;
+  --mast:#030D14; --mast-ink:#EEF2F5; --mast-muted:#8DA2B3;
+  --gold:#D9B868; --gold-strong:#C9A24E; --gold-soft:#2E2715;
+  --ok:#74C9A0; --ok-soft:#11291F; --warn:#F28B9A; --warn-soft:#361820; --amber:#E7C06A; --amber-soft:#2E2512;
+  --bar:#7FA3BF; --bar-soft:#2E4252; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;margin:0}
+.mast{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--mast);color:var(--mast-ink)}
+.mast-in{max-width:1220px;margin:0 auto;padding:14px 20px 0;display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 28px}
+.brand{display:flex;flex-direction:column;gap:2px;padding-bottom:12px;min-width:0}
+.brand h1{font-family:var(--f-display);font-size:1.35rem;margin:0;letter-spacing:.01em;text-wrap:balance}
+.brand small{color:var(--mast-muted);font-size:.8rem;letter-spacing:.04em}
+.brand small b{color:var(--gold-strong);font-weight:700}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap;margin-left:auto}
+nav.tabs button{font:inherit;font-size:.95rem;color:var(--mast-muted);background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px 11px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{color:var(--mast-ink);border-bottom-color:var(--gold-strong);font-weight:700}
+nav.tabs button:focus-visible{outline:2px solid var(--gold-strong);outline-offset:-2px}
+main{max-width:1220px;margin:0 auto;padding-inline:20px;padding-block:22px 48px}
+h2{font-size:1.25rem;margin:0 0 4px;text-wrap:balance} h3{font-size:1rem;margin:0 0 10px}
+.lede{color:var(--muted);margin:0 0 18px;max-width:72ch}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;color:var(--gold);font-weight:700;text-transform:uppercase}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.grid-rx{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.grid-rx{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:3px}
+input,select{width:100%;font:inherit;font-size:.95rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:7px 9px}
+input[type=number]{text-align:right;font-variant-numeric:tabular-nums}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--gold-strong);outline-offset:1px}
+.sec{font-size:.75rem;font-weight:700;letter-spacing:.06em;color:var(--muted);margin:4px 0 -4px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--mast);border-color:var(--mast);color:var(--mast-ink)}
+.presets{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.presets span{font-size:.8rem;color:var(--muted);margin-right:2px}
+.btn{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:4px;padding:6px 11px;cursor:pointer}
+.btn:hover{border-color:var(--gold-strong)}
+.btn.on{border-color:var(--gold-strong);background:var(--gold-soft)}
+.demo-flag{font-size:.75rem;color:var(--amber);background:var(--amber-soft);border-radius:4px;padding:2px 8px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--sunk);border-radius:4px;padding:10px 12px;min-width:0}
+.kpi small{display:block;font-size:.72rem;color:var(--muted);letter-spacing:.04em}
+.kpi b{font-size:1.25rem;font-variant-numeric:tabular-nums}
+.decision{font-family:var(--f-display);font-size:1.6rem;margin:2px 0;line-height:1.3}
+.reasons{margin:8px 0 0;padding-left:20px;color:var(--ink)} .reasons li{margin:2px 0}
+.note{border-radius:4px;padding:9px 12px;font-size:.88rem;margin:8px 0 0}
+.note.warn{background:var(--amber-soft);color:var(--ink);border-left:3px solid var(--amber)}
+.note.bad{background:var(--warn-soft);border-left:3px solid var(--warn)}
+.note.good{background:var(--ok-soft);border-left:3px solid var(--ok)}
+.note.info{background:var(--sunk);border-left:3px solid var(--muted)}
+details summary{cursor:pointer;color:var(--gold);font-weight:700;font-size:.9rem;margin-top:10px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.75rem;color:var(--muted);font-weight:700;background:var(--sunk);white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.chip{display:inline-block;font-size:.72rem;border-radius:999px;padding:1px 8px;border:1px solid var(--line);white-space:nowrap;font-weight:500}
+.chip.pmdi{border-color:var(--warn);color:var(--warn)}
+.chip.dpi,.chip.smi{border-color:var(--ok);color:var(--ok)}
+.chip.low{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.chip.mid{background:var(--amber-soft);border-color:transparent;color:var(--amber)}
+.chip.high{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.chip.unk{background:var(--amber-soft);border-color:transparent;color:var(--amber)}
+.muted{color:var(--muted);font-size:.82rem}
+.foot{font-size:.78rem;color:var(--muted);margin-top:14px;max-width:90ch}
+/* atlas */
+.classbars{display:flex;flex-direction:column;gap:7px}
+.cb{display:grid;grid-template-columns:120px minmax(0,1fr) 92px;gap:10px;align-items:center;font-size:.85rem}
+.cb .track{height:16px;background:var(--sunk);border-radius:2px;display:flex;overflow:hidden}
+.cb .p{background:var(--bar)} .cb .d{background:var(--gold-strong)}
+.cb .v{text-align:right;font-variant-numeric:tabular-nums}
+.legend{display:flex;gap:16px;font-size:.8rem;color:var(--muted);margin-top:6px;flex-wrap:wrap}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 10px}
+.filters input{max-width:240px} .filters select{max-width:180px}
+.plist{display:flex;flex-direction:column}
+.prow{display:grid;grid-template-columns:minmax(0,2.3fr) 76px 110px minmax(0,1.6fr);gap:12px;align-items:center;padding:9px 6px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;font:inherit;color:inherit;text-align:left;width:100%}
+.prow:hover{background:var(--sunk)}
+.prow .nm{min-width:0} .prow .nm b{display:block;font-size:.9rem;overflow-wrap:anywhere} .prow .nm span{font-size:.75rem;color:var(--muted)}
+.prow .kg{text-align:right;font-variant-numeric:tabular-nums} .prow .kg small{display:block;font-size:.7rem;color:var(--muted)}
+.tbar{display:flex;align-items:center;gap:8px;min-width:0}
+.tbar i{display:block;height:10px;background:var(--bar);border-radius:1px;flex:none}
+.tbar i.d{background:var(--gold-strong)}
+.tbar span{font-size:.8rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media (max-width:640px){.prow{grid-template-columns:minmax(0,1fr) 92px}.prow .tbar,.prow .devc{display:none}}
+.pdetail{background:var(--sunk);padding:12px 14px;border-bottom:1px solid var(--line);font-size:.88rem}
+.alts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:8px}
+.alt{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:8px 10px;min-width:0}
+.alt b{display:block;font-size:.86rem}
+.save{color:var(--gold);font-weight:700}
+/* stewardship */
+.map{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1.3fr);gap:0 10px;font-size:.9rem}
+.map div{padding:8px 0;border-bottom:1px solid var(--line)}
+.map .h{font-size:.75rem;color:var(--muted);font-weight:700;letter-spacing:.05em}
+.map .ar{color:var(--gold);text-align:center}
+.sim{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.sim{grid-template-columns:minmax(0,1fr)}}
+input[type=range]{padding:0;border:0;accent-color:var(--gold-strong)}
+.bignum{font-family:var(--f-display);font-size:2.6rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.bignum.good{color:var(--gold)} .bignum.bad{color:var(--warn)}
+.contrib{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.ct{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 80px;gap:10px;align-items:center;font-size:.83rem}
+.ct .tr{height:10px;background:var(--sunk);border-radius:1px} .ct .tr i{display:block;height:100%;background:var(--gold-strong)}
+.ct .tr i.neg{background:var(--warn)}
+.ct .v{text-align:right;font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+/* evidence */
+.ev{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.evc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.evc .stat{font-family:var(--f-display);font-size:1.7rem;color:var(--gold);line-height:1.2}
+.evc .q{font-size:.95rem;font-weight:700}
+.evc .so{border-top:1px solid var(--line);padding-top:8px;font-size:.86rem}
+.evc .so b{color:var(--gold)}
+.sig{font-size:.75rem;color:var(--warn);margin-top:10px}
+@media (max-width:640px){.brand small{display:none}.brand{padding-bottom:4px}nav.tabs{flex-wrap:nowrap;overflow-x:auto;width:100%;margin-left:0}nav.tabs button{white-space:nowrap;padding:8px 10px 9px}.mast-in{padding-top:10px}}
+@media (prefers-reduced-motion:no-preference){.tbar i,.ct .tr i{transition:width .35s ease}}
+</style></head><body>
+
+<header class="mast">
+  <div class="mast-in">
+    <div class="brand">
+      <h1>COPD Sustainable Rx Assist</h1>
+      <small><b>Clinical first · Carbon second</b>　GOLD 2026｜健保 2025 全國吸入器碳排圖譜｜新光醫院藥劑部</small>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="功能">
+      <button role="tab" id="t-rx" aria-controls="p-rx" aria-selected="true">開方決策</button>
+      <button role="tab" id="t-atlas" aria-controls="p-atlas" aria-selected="false">碳排圖譜</button>
+      <button role="tab" id="t-stw" aria-controls="p-stw" aria-selected="false">吸入器管理</button>
+      <button role="tab" id="t-ev" aria-controls="p-ev" aria-selected="false">研究證據</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- ============ 開方決策 ============ -->
+<section id="p-rx" role="tabpanel" aria-labelledby="t-rx">
+  <div class="presets" style="margin-bottom:14px">
+    <span>示範病例</span>
+    <button class="btn" data-preset="testpt">FHIR 測試病人</button>
+    <button class="btn" data-preset="initialE">新治療・Group E</button>
+    <button class="btn" data-preset="dyspnea">追蹤・呼吸困難</button>
+    <button class="btn" data-preset="stable">穩定續方</button>
+    <button class="btn" data-preset="missing">資料不足</button>
+    <button class="btn" data-preset="lowpif">吸氣流速不足</button>
+    <span class="demo-flag" id="demoFlag">示範資料，非真實病人</span>
+  </div>
+  <div class="grid-rx">
+    <form class="panel stack" id="rxForm" autocomplete="off">
+      <h3>病人資料</h3>
+      <div class="row2">
+        <div><label for="copdConfirmed">COPD 診斷</label><select id="copdConfirmed"><option value="yes">已確認</option><option value="uncertain">待確認</option><option value="no">非 COPD</option></select></div>
+        <div><label for="fevRatio">Post-BD FEV₁/FVC</label><input id="fevRatio" type="number" step="0.01" min="0" max="1"></div>
+      </div>
+      <div class="row2">
+        <div><label for="cat">CAT</label><input id="cat" type="number" min="0" max="40"></div>
+        <div><label for="mmrc">mMRC</label><input id="mmrc" type="number" min="0" max="4"></div>
+      </div>
+      <div class="row2">
+        <div><label for="modEx">過去 12 月中度惡化</label><input id="modEx" type="number" min="0" max="20"></div>
+        <div><label for="sevEx">過去 12 月重度惡化</label><input id="sevEx" type="number" min="0" max="20"></div>
+      </div>
+      <div class="row2">
+        <div><label for="eos">嗜酸性球 (cells/μL)</label><input id="eos" type="number" min="0" max="5000"></div>
+        <div><label for="asthma">合併氣喘</label><select id="asthma"><option value="unknown">不確定</option><option value="no">否</option><option value="yes">是</option></select></div>
+      </div>
+      <div class="row2">
+        <div><label for="currentTherapy">目前維持治療</label><select id="currentTherapy"><option value="none">無</option><option>LABA</option><option>LAMA</option><option>LABA/LAMA</option><option>ICS/LABA</option><option value="ICS/LABA/LAMA">ICS/LABA/LAMA</option></select></div>
+        <div><label for="smoking">吸菸狀態</label><select id="smoking"><option value="">未記錄</option><option value="current">目前吸菸</option><option value="former">已戒菸</option><option value="never">從未</option></select></div>
+      </div>
+      <div class="sec">今天開方目的</div>
+      <div class="pills" id="reasonPills">
+        <button type="button" class="pill" data-v="initial">新開始治療</button>
+        <button type="button" class="pill" data-v="dyspnea">呼吸困難</button>
+        <button type="button" class="pill" data-v="exacerbation">仍有惡化</button>
+        <button type="button" class="pill" data-v="stable">穩定續方</button>
+      </div>
+      <div class="sec">裝置能力（未評估不顯示碳排）</div>
+      <div class="row2">
+        <div><label for="fitDPI">乾粉 DPI</label><select id="fitDPI"><option value="unknown">未確認</option><option value="yes">可使用</option><option value="no">不適合</option></select></div>
+        <div><label for="fitSMI">緩釋型 SMI</label><select id="fitSMI"><option value="unknown">未確認</option><option value="yes">可使用</option><option value="no">不適合</option></select></div>
+      </div>
+      <div class="row2"><div><label for="fitPMDI">壓力定量 pMDI</label><select id="fitPMDI"><option value="unknown">未確認</option><option value="yes">可使用</option><option value="spacer">需 spacer</option><option value="no">不適合</option></select></div>
+        <div><label for="pif">吸氣流速 PIF（L/min）</label><input id="pif" type="number" min="0" max="120"></div></div>
+      <div class="row2">
+        <div><label for="chronicBronchitis">慢性支氣管炎</label><select id="chronicBronchitis"><option value="no">否</option><option value="yes">是</option></select></div>
+        <div><label for="fev1">FEV₁ % pred</label><input id="fev1" type="number" min="0" max="150"></div>
+      </div>
+    </form>
+
+    <div class="stack">
+      <div class="panel">
+        <div class="kpis">
+          <div class="kpi"><small>GOLD 2026</small><b id="oGold">—</b></div>
+          <div class="kpi"><small>路徑</small><b id="oPath">—</b></div>
+          <div class="kpi"><small>惡化（中／重）</small><b id="oEx">—</b></div>
+          <div class="kpi"><small>嗜酸性球</small><b id="oEos">—</b></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="eyebrow">建議治療類別</div>
+        <div class="decision" id="oTitle">—</div>
+        <div class="muted" id="oSub"></div>
+        <ul class="reasons" id="oReasons"></ul>
+        <div id="oGaps"></div>
+        <details><summary>進階建議與非藥物缺口</summary><div id="oAdv"></div></details>
+      </div>
+      <div class="panel">
+        <h3>新光院內候選品項</h3>
+        <div class="muted" style="margin-bottom:8px">先依臨床類別，再依裝置適配排序；碳排只在臨床等價的選項之間比較。年碳排以標示用法每月 1 支估算。</div>
+        <div id="oCandNote"></div>
+        <div class="tbl-wrap" id="oCandWrap">
+          <table><thead><tr><th>品項</th><th>裝置</th><th>用法</th><th>裝置適配</th><th>碳分帶</th><th class="num">kg CO₂e／年</th><th>證據</th></tr></thead><tbody id="oCand"></tbody></table>
+        </div>
+        <div class="note info" style="margin-top:12px">給病人的話：已在使用的吸入器，請先和醫療人員討論，不要自行停用。換裝置前要確認會用、吸得動，並在回診時追蹤控制情形。</div>
+      </div>
+      <div class="sig" id="signoff"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 碳排圖譜 ============ -->
+<section id="p-atlas" role="tabpanel" aria-labelledby="t-atlas" hidden>
+  <div class="eyebrow">健保 2025｜76 項手持吸入器（v5.4 EF 稽核版）</div>
+  <h2>碳排集中在少數 pMDI，替代選項多半就在同成分</h2>
+  <p class="lede">每一列是一個健保品項。點開可看到同成分、同治療類別的低碳劑型，以及若 10% 改用時全國每年可減少的量。數值為申報醫令量估算，不代表個別病人換藥建議。</p>
+  <div class="two">
+    <div class="panel">
+      <h3>各治療類別 2025 估算碳足跡（t CO₂e）</h3>
+      <div class="classbars" id="classBars"></div>
+      <div class="legend"><span><i class="sw" style="background:var(--bar)"></i>pMDI</span><span><i class="sw" style="background:var(--gold-strong)"></i>DPI／SMI</span></div>
+    </div>
+    <div class="panel">
+      <div class="kpis" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="kpi"><small>2025 全國估算</small><b id="aTot">—</b></div>
+        <div class="kpi"><small>申報醫令量</small><b id="aQ">—</b></div>
+        <div class="kpi"><small>pMDI 占醫令量</small><b id="aPq">—</b></div>
+        <div class="kpi"><small>pMDI 占碳足跡</small><b id="aPt">—</b></div>
+      </div>
+      <p class="muted" style="margin:12px 0 0">碳強度 <b id="aInt">—</b> kg CO₂e／申報醫令。pMDI 含 HFA-134a 等高 GWP 推進劑，是碳排主要來源。</p>
+    </div>
+  </div>
+  <div class="filters">
+    <input id="fSearch" type="search" placeholder="搜尋品名、中文名、健保碼" aria-label="搜尋">
+    <select id="fClass" aria-label="治療類別"><option value="">全部類別</option></select>
+    <div class="pills" id="fDev" role="group" aria-label="裝置">
+      <button type="button" class="pill" data-v="" aria-pressed="true">全部</button>
+      <button type="button" class="pill" data-v="pMDI" aria-pressed="false">pMDI</button>
+      <button type="button" class="pill" data-v="DPI" aria-pressed="false">DPI</button>
+      <button type="button" class="pill" data-v="SMI" aria-pressed="false">SMI</button>
+    </div>
+    <label style="display:flex;gap:6px;align-items:center;margin:0;font-size:.85rem;color:var(--ink)"><input id="fZero" type="checkbox" checked style="width:auto"> 只看 2025 有申報</label>
+  </div>
+  <div class="panel" style="padding:6px 12px">
+    <div class="prow" style="cursor:default;font-size:.75rem;color:var(--muted);font-weight:700" aria-hidden="true"><span>品項</span><span class="devc">裝置</span><span class="kg" style="text-align:right">kg／支</span><span class="tbar">2025 估算 t CO₂e</span></div>
+    <div class="plist" id="pList"></div>
+  </div>
+  <p class="foot">資料：健保署藥品申報量（含包裹支付醫令量）× 產品級排放係數（v5.4，證據 A/B 直接或產品特定；C 為裝置或類別代理，C-R 為舊型 CFC 重建）。醫令量不等於實體支數。</p>
+</section>
+
+<!-- ============ 吸入器管理 ============ -->
+<section id="p-stw" role="tabpanel" aria-labelledby="t-stw" hidden>
+  <div class="eyebrow">Inhaler stewardship</div>
+  <h2>像管理抗生素一樣管理吸入器：決策端之外，再加管理端</h2>
+  <p class="lede">決策支援只在開方那一刻起作用。管理端負責看全院與全國的處方型態、回饋給處方者、調整處方集，並用同一組指標追蹤成效。</p>
+  <div class="two">
+    <div class="panel">
+      <h3>抗生素管理的做法，對應到吸入器</h3>
+      <div class="map" id="aspMap"></div>
+    </div>
+    <div class="panel">
+      <h3>管理指標（2025 全國基準，v5.4）</h3>
+      <div class="kpis" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="kpi"><small>kg CO₂e／1,000 申報醫令</small><b id="sInt">—</b></div>
+        <div class="kpi"><small>pMDI 占醫令量</small><b id="sPq">—</b></div>
+        <div class="kpi"><small>維持型 pMDI 有同成分低碳劑型</small><b id="sSame">—</b></div>
+        <div class="kpi"><small>退場品項占碳足跡</small><b id="sExit">—</b></div>
+      </div>
+      <p class="muted" style="margin:12px 0 0">「有同成分低碳劑型」指同一組成分已有健保給付的 DPI 或 SMI，替換時不必改變治療類別，是處方者回饋最容易著力的部分。</p>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h3>情境模擬：若全國都依「臨床優先、碳排其次」開方</h3>
+    <div class="sim">
+      <div class="stack">
+        <div>
+          <label for="sU">維持型 pMDI 轉換比例（通過臨床與裝置閘門、且醫師採納）：<b id="sUv">25%</b></label>
+          <input id="sU" type="range" min="0" max="50" step="5" value="25">
+        </div>
+        <div>
+          <div class="sec" style="margin-bottom:6px">Berotec N、Berodual N 退場後的替代</div>
+          <div class="pills" id="sE">
+            <button type="button" class="pill" data-v="E1" aria-pressed="false">改用其他 pMDI</button>
+            <button type="button" class="pill" data-v="E2" aria-pressed="false">半數改 DPI／SMI</button>
+            <button type="button" class="pill" data-v="E3" aria-pressed="true">全數改 DPI／SMI</button>
+          </div>
+        </div>
+        <div>
+          <div class="sec" style="margin-bottom:6px">納入範圍</div>
+          <div class="pills" id="sScope">
+            <button type="button" class="pill" data-v="all" aria-pressed="true">全部維持型 pMDI</button>
+            <button type="button" class="pill" data-v="top3" aria-pressed="false">前五大中三項</button>
+          </div>
+        </div>
+        <p class="muted" style="margin:0">規則：只做同成分或同類別替換；SABA 等緩解藥不主動轉換，只處理退場品項；替代以每支對每支計。</p>
+      </div>
+      <div>
+        <div class="muted">與 2025 年基準相比，每年</div>
+        <div class="bignum" id="sNet">—</div>
+        <div id="sNetSub" style="font-size:.95rem"></div>
+        <div class="contrib" id="sContrib"></div>
+      </div>
+    </div>
+  </div>
+  <p class="foot">新光醫院 2023 年 ISO 14064-1 類別 1–4 盤查 18,595.6 t CO₂e，作為量級比較。同類別替代以該類別 DPI／SMI 依醫令量加權的係數計；三合一排除僅限氣喘適應症之品項。退場替代：其他 pMDI 以 salbutamol pMDI 28 kg、DPI／SMI 以 ≤1 kg 上限計。</p>
+</section>
+
+<!-- ============ 研究證據 ============ -->
+<section id="p-ev" role="tabpanel" aria-labelledby="t-ev" hidden>
+  <div class="eyebrow">新光醫院藥劑部｜TriNetX 目標試驗模擬</div>
+  <h2>處方行為跟著指標走，臨床結果卻沒有跟上</h2>
+  <p class="lede">三項研究都使用新使用者設計、1:1 傾向分數配對，並以陰性對照校正系統性偏誤。結果都屬觀察性、可產生假說的證據。</p>
+  <div class="ev" id="evCards"></div>
+  <h3 style="margin-top:26px">外部事件與病人溝通</h3>
+  <div class="ev" id="evCards2"></div>
+</section>
+</main>
+
+<script>/**
+ * copd_rules.js — COPD 臨床規則包（GOLD 2026）
+ *
+ * ⚠ 這是資料檔，不是程式檔。維護者為胸腔科醫師。
+ *   本檔內不得出現 function / if / for / 三元運算子。
+ *
+ * ⚠ 上線前必須以 GOLD 2026 報告 Fig 3.7–3.11 原圖逐條核對後，
+ *   填入 provenance.verified_by 與 verified_date。未填時系統顯示紅色警告。
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.COPD_RULES = factory();
+}(typeof self !== 'undefined' ? self : this, function () {
+return {
+
+  pack_id: 'copd_gold',
+  pack_version: '1.0',
+  clinical_basis: 'GOLD 2026',
+
+  provenance: {
+    sources: [
+      { id: 'GOLD-2026', name: 'GOLD Report 2026（Fig 3.7–3.11）', version: '2026',
+        url: 'https://goldcopd.org/' },
+      { id: 'SPC-TW', name: '台灣現行仿單（食藥署許可證）', version: null,
+        url: 'https://info.fda.gov.tw/MLMS/H0001.aspx' },
+      { id: 'NHI', name: '健保藥品給付規定', version: null,
+        url: 'https://www.nhi.gov.tw/ch/np-2505-1.html' }
+    ],
+    verified_by: null,          // ⚠ 胸腔科醫師姓名
+    verified_date: null,        // ⚠ YYYY-MM-DD
+    review_due: '2026-12-31',   // GOLD 每年 11 月改版，隔年 1 月前完成核對
+    review_cadence_note: 'GOLD 每年 11 月發布新版；健保給付規定變動頻繁，建議每季核對'
+  },
+
+  intended_use: {
+    purpose: '依 GOLD 2026 比對病人資料與初始／追蹤藥物治療演算法，並在臨床等價且裝置適用的候選中比較產品碳足跡，供醫療專業人員參考',
+    intended_user: '醫師、藥師（僅限醫療專業人員）',
+    patient_population: '成人已確診 COPD 病患',
+    time_critical: false,
+    not_intended_for: [
+      '急性惡化之處置（本系統僅處理維持治療）',
+      '非藥物治療與疫苗的完整規劃（僅做缺口提示）',
+      '病人或照顧者自行使用',
+      'COPD 診斷未確認者'
+    ],
+    algorithm_basis: '確定性規則查表，逐條比對 GOLD 2026 演算法與病人資料。不含任何統計模型或機器學習推論。',
+    validation_basis: '軟體實作正確性以案例與不變式測試驗證；臨床有效性依據 GOLD 2026 之原始證據，本系統未進行獨立臨床試驗。',
+    known_limitations: [
+      'CAT/mMRC 多數醫院無結構化欄位，未評估時系統不進行分組',
+      '急性惡化次數由 J44.1 + Encounter 推導，為候選值，須臨床確認',
+      '裝置適配（PIF、協調能力）目前為人工欄位',
+      '碳足跡比較不含緩解用藥（SABA），且推進劑轉換中',
+      '不涵蓋非藥物治療與疫苗的完整建議，僅做缺口提示'
+    ]
+  },
+
+  // ── 決策機制宣告（非補償性 vs 補償性）──
+  mechanisms: {
+    diagnosis_gate: { type: 'elimination', compensatory: false, runOrder: 1,
+      note: 'COPD 診斷未確認時不產生任何維持治療建議' },
+    abe_grouping:   { type: 'matrix', compensatory: false, runOrder: 2,
+      note: '惡化次數 × 症狀分數的交叉分類；症狀資料缺失時回傳 UNASSESSED，不得猜測' },
+    therapy_class:  { type: 'decisionTree', compensatory: false, runOrder: 3,
+      note: '初始／追蹤兩條路徑，依目前治療分框；GOLD 2026 明確區分兩者' },
+    device_fit:     { type: 'elimination', compensatory: false, runOrder: 4,
+      note: '裝置不適用者直接排除，不得由碳足跡優勢抵銷' },
+    carbon:         { type: 'tiebreak', compensatory: false, runOrder: 5,
+      note: '⚠ 僅在臨床類別相同且裝置適配相同時作為決勝因子。永不跨臨床類別、永不覆蓋裝置適配' }
+  },
+
+  thresholds: {
+    groupE_exacerbations: 1,      // GOLD 2026：≥1 次中度或重度
+    groupB_cat: 10,
+    groupB_mmrc: 2,
+    initial_triple_eos: 300,      // 初始治療門檻
+    followup_ics_eos: 100,        // 追蹤治療門檻（與初始不同，不可混用）
+    biologic_eos: 300,
+    biologic_min_exacerbations: 1,// GOLD 僅要求「仍持續惡化」
+    ics_withdrawal_caution_eos: 300,
+    roflumilast_fev1_pct: 50,
+    low_eos_not_sole_reason: true // eos<100 不得作為排除 ICS 的唯一理由
+  },
+
+  // ── ICS 撤除的合法理由（GOLD 2026：非以下情形不應撤除）──
+  ics_withdrawal_reasons: [
+    { key: 'inappropriate_start', label: 'ICS 原本即無適當適應症' },
+    { key: 'no_response',         label: '對 ICS 無臨床反應' },
+    { key: 'major_side_effects',  label: '出現重大副作用' },
+    { key: 'pneumonia',           label: '反覆或重度肺炎' }
+  ],
+
+  // ── 生物製劑：兩者不可互換 ──
+  biologics: [
+    { name: 'Dupilumab', requires_chronic_bronchitis: true,
+      note: 'BOREAS/NOTUS：中重度惡化降低約 30% 並改善肺功能。適應症限合併慢性支氣管炎者' },
+    { name: 'Mepolizumab', requires_chronic_bronchitis: false,
+      note: 'METREX/METREO/MATINEE：惡化降幅約 18–21%，肺功能與症狀改善不一致。不論有無慢性支氣管炎皆可' }
+  ],
+
+  // ── 非藥物與預防缺口（GOLD 2026 強調；本系統僅做缺口提示）──
+  nonpharm_checks: [
+    { key: 'smoking_cessation', label: '戒菸介入',
+      trigger_when_smoking: 'current',
+      message: '現行吸菸：戒菸是唯一能改變 COPD 自然病程的介入，應優先安排戒菸門診或藥物治療。' },
+    { key: 'pulmonary_rehab', label: '肺復健',
+      message: '評估肺復健轉介；GOLD 2026 列為最能改善結果的非藥物介入之一。' },
+    { key: 'vaccine_influenza', label: '流感疫苗', interval_months: 12 },
+    { key: 'vaccine_rsv', label: 'RSV 疫苗', note: 'GOLD 2026 更新之建議' },
+    { key: 'vaccine_pneumococcal', label: '肺炎鏈球菌疫苗' },
+    { key: 'vaccine_covid', label: 'COVID-19 疫苗' },
+    { key: 'physical_activity', label: '身體活動衛教' }
+  ],
+
+  // ── 警示登錄簿：每則都須有負責人、可量測成果、退場審查日 ──
+  alerts: {
+    'DX-UNCONFIRMED':   { owner: null, metric: 'COPD 診斷未確認即開立維持治療之比率 ↓', interruptive: false, review_due: '2027-08-31' },
+    'DX-RATIO-CONFLICT':{ owner: null, metric: 'FEV₁/FVC ≥0.70 卻標記 COPD 之案例複核率 ↑', interruptive: false, review_due: '2027-08-31' },
+    'GOLD-UNASSESSED':  { owner: null, metric: 'CAT/mMRC 結構化紀錄覆蓋率 ↑',            interruptive: false, review_due: '2027-02-28' },
+    'ESC-INITIAL':      { owner: null, metric: '初始治療與 GOLD 分組一致率 ↑',           interruptive: false, review_due: '2027-02-28' },
+    'ESC-DUAL':         { owner: null, metric: '單方治療且仍惡化者升階率 ↑',             interruptive: false, review_due: '2027-02-28' },
+    'ESC-TRIPLE':       { owner: null, metric: 'eos ≥100 且仍惡化者三合一升階率 ↑',      interruptive: false, review_due: '2027-02-28' },
+    'ICS-LOW-EOS':      { owner: null, metric: 'eos <100 但高惡化負擔者之 ICS 決策記錄率 ↑', interruptive: false, review_due: '2027-02-28' },
+    'ICS-WITHDRAW':     { owner: null, metric: '無合法理由之 ICS 撤除件數 → 0',          interruptive: false, review_due: '2027-08-31' },
+    'ICS-WITHDRAW-RISK':{ owner: null, metric: 'eos ≥300 者撤除 ICS 之件數 ↓',           interruptive: false, review_due: '2027-08-31' },
+    'ADV-ROFLUMILAST':  { owner: null, metric: '符合條件者 roflumilast 評估率 ↑',        interruptive: false, review_due: '2027-08-31' },
+    'ADV-AZITHRO':      { owner: null, metric: 'azithromycin 評估率與抗藥性監測',        interruptive: false, review_due: '2027-08-31' },
+    'ADV-BIOLOGIC':     { owner: null, metric: '符合條件者生物製劑轉介率 ↑',             interruptive: false, review_due: '2027-02-28' },
+    'ASTHMA-ICS':       { owner: null, metric: '合併氣喘者 ICS 保留率 → 100%',           interruptive: true,  review_due: '2027-08-31' },
+    'GAP-NONPHARM':     { owner: null, metric: '戒菸／肺復健／疫苗缺口關閉率 ↑',         interruptive: false, review_due: '2027-08-31' },
+    'DATA-INSUFFICIENT':{ owner: null, metric: '因資料不足無法判定之比率 ↓',             interruptive: false, review_due: '2027-08-31' },
+    'DEVICE-UNCONFIRMED':{owner: null, metric: '裝置適配評估完成率 ↑',                   interruptive: false, review_due: '2027-02-28' },
+    'CARBON-SUPPRESSED':{ owner: null, metric: '（狀態顯示，非警示）',                   interruptive: false, review_due: '2028-08-31' },
+    'CARBON-FORMULATION-UNKNOWN': { owner: null, metric: '本院 pMDI 配方版本確認完成率 ↑', interruptive: false, review_due: '2026-11-30' }
+  },
+
+  governance: [
+    'advisory only；不自動處方、不自動換藥、不擋單',
+    '臨床適當性與裝置適用性一律優先於碳足跡',
+    '碳足跡僅作為臨床等價選項間的決勝因子，永不跨臨床類別',
+    '裝置適配未確認時不顯示碳排序',
+    'FHIR 推導之惡化次數為候選值，須臨床確認',
+    'CAT/mMRC 未取得時不進行 ABE 分組'
+  ]
+};
+}));
+</script>
+<script>/**
+ * copd_products.js — 院內處方集與碳足跡（配方版本層級）
+ *
+ * ⚠ 資料檔。維護者為藥劑部 + 永續小組。
+ *
+ * ⚠ 重要設計變更：碳足跡是「配方版本」的屬性，不是「產品」的屬性。
+ *   pMDI 推進劑正由 HFA-134a 轉換至 HFA-152a / HFO-1234ze，
+ *   轉換後碳足跡約降 90%，而產品名稱與健保碼可能不變。
+ *   因此每個產品必須註明 local_supply_formulation，未確認前不得顯示碳排數值。
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.COPD_PRODUCTS = factory();
+}(typeof self !== 'undefined' ? self : this, function () {
+
+// 碳足跡分帶：只主張站得住腳的差異。
+// pMDI(HFA-134a) 與 DPI/SMI 差 20–40 倍是穩健的；帶內 2 倍差異落在 LCA 方法學雜訊內。
+const BANDS = [
+  { id: 'low',  max: 1,        label: '低碳裝置',        cls: 'ok',      note: '不含高 GWP 推進劑' },
+  { id: 'mid',  max: 10,       label: '中等',            cls: 'unknown', note: '' },
+  { id: 'high', max: Infinity, label: '含高 GWP 推進劑', cls: 'warn',    note: '推進劑為主要碳排來源' }
+];
+
+return {
+  pack_id: 'copd_products',
+  pack_version: '1.0',
+
+  provenance: {
+    verified_by: null,          // ⚠ 藥劑部負責人
+    verified_date: null,
+    review_due: '2026-11-30',   // 推進劑轉換進行中，需高頻複核
+    carbon_method: {
+      functional_unit: '每年、依標示用法、單一維持治療吸入器（不含緩解用藥）',
+      boundary: '⚠ 待補：各引用 LCA 之系統邊界（cradle-to-grave？是否含棄置？）',
+      caveat: '本比較不含緩解用藥。若換藥後 SABA 使用量增加，總碳排可能抵銷此差異。',
+      precision_note: '同一分帶內不排序 —— 帶內差異落在 LCA 方法學雜訊範圍內'
+    },
+    propellant_transition_note:
+      'pMDI 推進劑轉換進行中（HFA-152a / HFO-1234ze，廠商聲稱降幅約 90–99.9%）。' +
+      '本院實際供應之配方版本必須逐項確認；未確認者碳排標示為「配方未確認」。'
+  },
+
+  bands: BANDS,
+
+  // 吸氣流速（PIF）門檻：以 In-Check DIAL 設定在該裝置阻力下實測。
+  // ⚠ pif_min／pif_opt 為一般文獻值（DPI 最低約 30、理想約 60 L/min），上線前須依各產品仿單與文獻核對。
+  // 高阻力 DPI（如 Turbuhaler、Diskus）住院 COPD 病人 PIF 不足比例逾五成（Grandmaison 2024），無實測值不列為「適合」。
+  pif_note: 'PIF 以 In-Check DIAL 依裝置阻力實測；高阻力 DPI 未實測時不列為適合',
+
+  products: [
+    // ── LAMA 單方 ──
+    { code:'1EQT04', nhi:'BC25033161', name:'Spiriva Respimat', cls:'LAMA', device:'SMI',
+      regimen:'2 inhalations once daily', actuations_per_device:60, actuations_per_day:2,
+      copd_candidate:true, local_supply_formulation:'std',
+      formulations:[{ id:'std', propellant:'—（SMI 無推進劑）', carbon_low:0.775, carbon_mid:0.775, carbon_high:0.78,
+        status:'current', evidence:'A', source:'⚠ 待補引用' }] },
+
+    // ── LABA/LAMA ──
+    { code:'1EQA01', nhi:'BC26315143', name:'Anoro Ellipta', cls:'LABA/LAMA', device:'DPI', resistance:'medium', pif_min:30, pif_opt:60,
+      regimen:'1 inhalation once daily', actuations_per_device:30, actuations_per_day:1,
+      copd_candidate:true, local_supply_formulation:'std',
+      formulations:[{ id:'std', propellant:'—（DPI 無推進劑）', carbon_low:0.4, carbon_mid:0.765, carbon_high:0.8,
+        status:'current', evidence:'B', source:'⚠ 待補引用；Ellipta 裝置家族代理值' }] },
+
+    { code:'1EQS08', nhi:'BC26735443', name:'Spiolto Respimat', cls:'LABA/LAMA', device:'SMI',
+      regimen:'2 inhalations once daily', actuations_per_device:60, actuations_per_day:2,
+      copd_candidate:true, local_supply_formulation:'std',
+      formulations:[{ id:'std', propellant:'—（SMI 無推進劑）', carbon_low:0.775, carbon_mid:0.775, carbon_high:0.784,
+        status:'current', evidence:'B', source:'⚠ 待補引用；Respimat 裝置家族代理值' }] },
+
+    { code:'1EQU01', nhi:'BC26301443', name:'Ultibro Breezhaler', cls:'LABA/LAMA', device:'DPI', resistance:'low', pif_min:30, pif_opt:60,
+      regimen:'1 capsule inhaled once daily', actuations_per_device:30, actuations_per_day:1,
+      copd_candidate:true, local_supply_formulation:'std', note:'限交付調劑',
+      formulations:[{ id:'std', propellant:'—（DPI 無推進劑）', carbon_low:0.184, carbon_mid:0.359, carbon_high:0.481,
+        status:'current', evidence:'B', source:'⚠ 待補引用' }] },
+
+    { code:'1EQB02', nhi:'BC27524457', name:'Bevespi Aerosphere', cls:'LABA/LAMA', device:'pMDI',
+      regimen:'2 inhalations twice daily', actuations_per_device:120, actuations_per_day:4,
+      copd_candidate:true, local_supply_formulation:null,   // ⚠ 待藥劑部確認
+      formulations:[
+        { id:'hfa134a', propellant:'HFA-134a', carbon_low:17.8, carbon_mid:17.8, carbon_high:25.3,
+          status:'current', evidence:'B', source:'⚠ 待補引用' },
+        { id:'hfo1234ze', propellant:'HFO-1234ze', carbon_low:null, carbon_mid:null, carbon_high:null,
+          status:'in_transition', evidence:null,
+          source:'AstraZeneca 產品線轉換中（廠商聲稱 GWP 影響低 99.9%，非獨立 LCA）' }
+      ] },
+
+    // ── ICS/LABA/LAMA 三合一 ──
+    { code:'1EQT05', nhi:'BC27395443', name:'Trelegy Ellipta 92/55/22', cls:'ICS/LABA/LAMA', device:'DPI', resistance:'medium', pif_min:30, pif_opt:60,
+      regimen:'1 inhalation once daily', actuations_per_device:30, actuations_per_day:1,
+      copd_candidate:true, local_supply_formulation:'std',
+      formulations:[{ id:'std', propellant:'—（DPI 無推進劑）', carbon_low:0.4, carbon_mid:0.79, carbon_high:0.85,
+        status:'current', evidence:'B', source:'⚠ 待補引用；Ellipta 裝置家族代理值' }] },
+
+    { code:'1EQB04', nhi:'BC28183457', name:'Breztri Aerosphere', cls:'ICS/LABA/LAMA', device:'pMDI',
+      regimen:'2 inhalations twice daily', actuations_per_device:120, actuations_per_day:4,
+      copd_candidate:true, local_supply_formulation:null,   // ⚠ 待藥劑部確認
+      formulations:[
+        { id:'hfa134a', propellant:'HFA-134a', carbon_low:17.8, carbon_mid:17.8, carbon_high:17.8,
+          status:'current', evidence:'B', source:'⚠ 待補引用' },
+        { id:'hfo1234ze', propellant:'HFO-1234ze', carbon_low:null, carbon_mid:null, carbon_high:null,
+          status:'in_transition', evidence:null,
+          source:'AstraZeneca 已完成支持轉換之臨床試驗計畫（2024）；本院供應狀態待確認' }
+      ] },
+
+    { code:'1EQT06', nhi:'BC27672457', name:'Trimbow 100/6/12.5', cls:'ICS/LABA/LAMA', device:'pMDI',
+      regimen:'2 inhalations twice daily', actuations_per_device:120, actuations_per_day:4,
+      copd_candidate:true, local_supply_formulation:null,   // ⚠ 待藥劑部確認
+      formulations:[
+        { id:'hfa134a', propellant:'HFA-134a', carbon_low:14.28, carbon_mid:14.5, carbon_high:14.5,
+          status:'current', evidence:'A', source:'直接產品 LCA ⚠ 待補完整引用' },
+        { id:'hfa152a', propellant:'HFA-152a', carbon_low:null, carbon_mid:null, carbon_high:null,
+          status:'in_transition', evidence:null,
+          source:'AAPS PharmSciTech 2025：與 HFA-134a 版本效能可比性已發表；本院供應狀態待確認' }
+      ] },
+
+    // ── 非 COPD 候選 ──
+    { code:'1EQE01', nhi:'BC28049443', name:'Enerzair Breezhaler', cls:'ICS/LABA/LAMA', device:'DPI', resistance:'low', pif_min:30, pif_opt:60,
+      regimen:'—', actuations_per_device:30, actuations_per_day:1,
+      copd_candidate:false, note:'不列為 COPD 候選；需依本院/TFDA 適應症覆核',
+      local_supply_formulation:'std',
+      formulations:[{ id:'std', propellant:'—', carbon_low:0.359, carbon_mid:0.359, carbon_high:0.481,
+        status:'current', evidence:'A', source:'⚠ 待補引用' }] },
+
+    { code:'1EQT07', nhi:'BC28240443', name:'Trelegy Ellipta 184/55/22', cls:'ICS/LABA/LAMA', device:'DPI', resistance:'medium', pif_min:30, pif_opt:60,
+      regimen:'—', actuations_per_device:30, actuations_per_day:1,
+      copd_candidate:false, note:'不列為 COPD 候選；需依本院/TFDA 適應症覆核',
+      local_supply_formulation:'std',
+      formulations:[{ id:'std', propellant:'—', carbon_low:0.4, carbon_mid:0.79, carbon_high:0.85,
+        status:'current', evidence:'B', source:'⚠ 待補引用' }] }
+  ],
+
+  // 藥物辨識：ATC 不足時以本院碼／健保碼／關鍵字三層備援
+  medication_detection: [
+    { local:'1EQT04', nhi:'BC25033161', name:'Spiriva Respimat',   cls:'LAMA',          keywords:['spiriva','tiotropium'] },
+    { local:'1EQA01', nhi:'BC26315143', name:'Anoro Ellipta',      cls:'LABA/LAMA',     keywords:['anoro','umeclidinium'] },
+    { local:'1EQB02', nhi:'BC27524457', name:'Bevespi Aerosphere', cls:'LABA/LAMA',     keywords:['bevespi','glycopyrrolate/formoterol'] },
+    { local:'1EQS08', nhi:'BC26735443', name:'Spiolto Respimat',   cls:'LABA/LAMA',     keywords:['spiolto','olodaterol'] },
+    { local:'1EQU01', nhi:'BC26301443', name:'Ultibro Breezhaler', cls:'LABA/LAMA',     keywords:['ultibro','indacaterol/glycopyrronium'] },
+    { local:'1EQB04', nhi:'BC28183457', name:'Breztri Aerosphere', cls:'ICS/LABA/LAMA', keywords:['breztri'] },
+    { local:'1EQT05', nhi:'BC27395443', name:'Trelegy Ellipta',    cls:'ICS/LABA/LAMA', keywords:['trelegy'] },
+    { local:'1EQT06', nhi:'BC27672457', name:'Trimbow',            cls:'ICS/LABA/LAMA', keywords:['trimbow'] },
+    { local:'1EQF06', nhi:'BC250921FL', name:'Foster MDI',         cls:'ICS/LABA',      keywords:['foster'] },
+    { local:'1EQF08', nhi:'BC268161FL', name:'Foster NEXThaler',   cls:'ICS/LABA',      keywords:['foster nexthaler'] },
+    { local:'1EQR01', nhi:'BC26318143', name:'Relvar Ellipta',     cls:'ICS/LABA',      keywords:['relvar'] },
+    { local:'1EQS03', nhi:'BC232651E7', name:'Symbicort Turbuhaler',cls:'ICS/LABA',     keywords:['symbicort turbuhaler'] },
+    { local:'1EQS07', nhi:'BC266571E7', name:'Symbicort Rapihaler', cls:'ICS/LABA',     keywords:['symbicort rapihaler'] },
+    { local:'1EQS02', nhi:'BC23202127', name:'Seretide Accuhaler', cls:'ICS/LABA',      keywords:['seretide','accuhaler'] },
+    { local:'1EQS04', nhi:'BC23482137', name:'Seretide Evohaler',  cls:'ICS/LABA',      keywords:['seretide','evohaler'] }
+  ]
+};
+}));
+</script>
+<script>/**
+ * copd_engine.js — COPD 決策引擎（純函式，零網路依賴）
+ *
+ * 修正 2026-08-16 GOLD 2026 稽核發現的落差：
+ *   D0  num() 缺值回傳 0 → CAT/mMRC 未填時靜默歸為 Group A     → 新增 UNASSESSED
+ *   D1  生物製劑門檻過嚴且未區分 dupilumab / mepolizumab        → 依 cb 分流，門檻改 ≥1
+ *   D2  eos<100 被寫成「不用 ICS」硬分支                        → 改為軟性，高惡化負擔時主動提示
+ *   D3  單方→三合一用 300（初始門檻）而非 100（追蹤門檻）       → 改用 followup_ics_eos
+ *   D4  ICS 撤除只實作 1/4 理由，且 eos≥300 警告只在惡化分支     → 獨立檢核，四理由全列，全分支警告
+ *   D5  azithromycin 只在已戒菸者顯示                           → 一律顯示並標注優先順序
+ *   C1  非藥物與疫苗完全缺席                                    → 新增缺口檢核
+ *
+ * 輸出契約（供 UI 使用）：
+ *   { gold, pathway, class, title, sub, reasons[], advanced[], gaps[], dataGaps[],
+ *     carbonAllowed, alerts[] }
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports)
+    module.exports = factory(require('./copd_rules.js'), require('./copd_products.js'));
+  else root.COPD_ENGINE = factory(root.COPD_RULES, root.COPD_PRODUCTS);
+}(typeof self !== 'undefined' ? self : this, function (RULES, PRODUCTS) {
+'use strict';
+
+if (!RULES || !PRODUCTS) throw new Error('規則包或產品包未載入');
+const T = RULES.thresholds;
+
+/** 數值取得。⚠ 缺值一律回傳 null，絕不以 0 代替 —— 這是 D0 的修正核心。 */
+function n(v) {
+  if (v === null || v === undefined || v === '') return null;
+  const x = parseFloat(v);
+  return Number.isFinite(x) ? x : null;
+}
+const has = v => v !== null && v !== undefined;
+
+/* ══════════════════════════════════════════════════════════════
+   ABE 分組
+   ══════════════════════════════════════════════════════════════ */
+function calcGold(s) {
+  const mod = n(s.modEx), sev = n(s.sevEx), cat = n(s.cat), mmrc = n(s.mmrc);
+
+  // 惡化次數已知且達門檻 → E（不需症狀分數）
+  if (has(mod) && has(sev) && (mod + sev) >= T.groupE_exacerbations)
+    return { group: 'E', basis: `過去12月 ${mod} 次中度 + ${sev} 次重度惡化（門檻 ≥${T.groupE_exacerbations}）` };
+
+  // ⚠ D0：症狀資料全缺時不得歸類。回傳 UNASSESSED，由呼叫端停止建議。
+  if (!has(cat) && !has(mmrc))
+    return { group: 'UNASSESSED', basis: 'CAT 與 mMRC 皆未取得，無法判定症狀負擔' };
+
+  if (!has(mod) || !has(sev))
+    return { group: 'UNASSESSED', basis: '急性惡化次數未確認，無法判定分組' };
+
+  const symptomatic = (has(cat) && cat >= T.groupB_cat) || (has(mmrc) && mmrc >= T.groupB_mmrc);
+  return symptomatic
+    ? { group: 'B', basis: `無中度／重度惡化；CAT ${cat ?? '—'} 或 mMRC ${mmrc ?? '—'} 達 Group B 症狀門檻` }
+    : { group: 'A', basis: `無中度／重度惡化，且症狀負擔低於 Group B 門檻` };
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ICS 撤除檢核（D4）：四個合法理由，且 eos≥300 警告不分分支
+   ══════════════════════════════════════════════════════════════ */
+function icsWithdrawal(s, out) {
+  const onICS = (s.currentTherapy || '').includes('ICS');
+  if (!onICS) return;
+
+  const reasons = RULES.ics_withdrawal_reasons.filter(r => s[r.key] === 'yes' || s[r.key] === true);
+  const eos = n(s.eos);
+
+  if (reasons.length) {
+    out.advanced.push({
+      id: 'ICS-WITHDRAW',
+      text: `符合 GOLD 2026 可考慮撤除 ICS 之情形：${reasons.map(r => r.label).join('、')}。` +
+            `其餘情形不應自三合一撤除 ICS。`
+    });
+  } else if (s.considerIcsWithdrawal === 'yes') {
+    out.advanced.push({
+      id: 'ICS-WITHDRAW',
+      text: 'GOLD 2026：除「ICS 原本即無適當適應症」「對 ICS 無臨床反應」「重大副作用」' +
+            '「反覆或重度肺炎」之外，不應自三合一撤除 ICS。目前未勾選任一項。'
+    });
+  }
+
+  // ⚠ D4 修正：此警告原本只在惡化分支出現，現在任何分支都給
+  if (has(eos) && eos >= T.ics_withdrawal_caution_eos && (reasons.length || s.considerIcsWithdrawal === 'yes')) {
+    out.advanced.push({
+      id: 'ICS-WITHDRAW-RISK',
+      text: `⚠ 嗜酸性球 ${eos} ≥${T.ics_withdrawal_caution_eos} cells/μL：GOLD 2026 指出此族群撤除 ICS 後惡化風險上升，應特別謹慎。`
+    });
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   進階選項：roflumilast / azithromycin / 生物製劑
+   ══════════════════════════════════════════════════════════════ */
+function advancedOptions(s, out) {
+  const eos = n(s.eos), fev1 = n(s.fev1);
+  const mod = n(s.modEx) || 0, sev = n(s.sevEx) || 0;
+  const cb = s.chronicBronchitis === 'yes';
+
+  if (has(fev1) && fev1 < T.roflumilast_fev1_pct && cb) {
+    out.advanced.push({ id: 'ADV-ROFLUMILAST',
+      text: `FEV₁ ${fev1}% <${T.roflumilast_fev1_pct}% 且有慢性支氣管炎：可評估 roflumilast。` +
+            `（部分 GOLD 版本另列「有重度惡化史」條件，請以 Fig 3.10 原圖核對）` });
+  }
+
+  // ⚠ D5 修正：一律顯示，只調整優先順序措辭
+  out.advanced.push({ id: 'ADV-AZITHRO',
+    text: s.smoking === 'former'
+      ? '已戒菸：azithromycin 為優先考慮對象（需權衡抗藥性與 QT）。'
+      : 'azithromycin：GOLD 優先用於已戒菸者，現行吸菸者效益證據較弱；如考慮使用應先安排戒菸。' });
+
+  // ⚠ D1 修正：門檻由 (mod≥2||sev≥1) 改為 ≥1；並依慢性支氣管炎分流兩種生物製劑
+  if (has(eos) && eos >= T.biologic_eos && (mod + sev) >= T.biologic_min_exacerbations) {
+    const fit = RULES.biologics.filter(b => !b.requires_chronic_bronchitis || cb);
+    const excluded = RULES.biologics.filter(b => b.requires_chronic_bronchitis && !cb);
+    out.advanced.push({ id: 'ADV-BIOLOGIC',
+      text: `三合一治療下仍有惡化且嗜酸性球 ${eos} ≥${T.biologic_eos} cells/μL：` +
+            `可考慮 ${fit.map(b => b.name).join(' 或 ')}。` +
+            fit.map(b => `${b.name}：${b.note}`).join('；') +
+            (excluded.length ? `。${excluded.map(b => b.name).join('、')} 之適應症限合併慢性支氣管炎者，本例未標記慢性支氣管炎。` : '') });
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   非藥物與疫苗缺口（C1）
+   ══════════════════════════════════════════════════════════════ */
+function nonPharmGaps(s) {
+  const gaps = [];
+  for (const c of RULES.nonpharm_checks) {
+    if (c.key === 'smoking_cessation') {
+      if (s.smoking === 'current') gaps.push({ key: c.key, label: c.label, level: 'high', text: c.message });
+      continue;
+    }
+    if (c.key === 'pulmonary_rehab') {
+      if (s.pulmonaryRehab !== 'yes') gaps.push({ key: c.key, label: c.label, level: 'mid', text: c.message });
+      continue;
+    }
+    if (c.key.indexOf('vaccine_') === 0) {
+      if (s[c.key] !== 'yes') gaps.push({ key: c.key, label: c.label, level: 'mid',
+        text: `${c.label}未記錄或未完成${c.note ? '（' + c.note + '）' : ''}。` });
+      continue;
+    }
+    if (s[c.key] !== 'yes') gaps.push({ key: c.key, label: c.label, level: 'low', text: `${c.label}未記錄。` });
+  }
+  return gaps;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   主決策
+   ══════════════════════════════════════════════════════════════ */
+function evaluate(s) {
+  const out = { class: null, title: '', sub: '', reasons: [], advanced: [], gaps: [], dataGaps: [], alerts: [] };
+  const push = (id, text) => out.advanced.push({ id, text });
+
+  const eos = n(s.eos);
+  const asthma = s.asthma === 'yes';
+  const current = s.currentTherapy || 'none';
+  const mod = n(s.modEx), sev = n(s.sevEx);
+  const g = calcGold(s);
+  out.gold = g.group;
+  out.goldBasis = g.basis;
+
+  // ── 閘門 1：診斷 ──
+  if (s.copdConfirmed !== 'yes') {
+    out.title = '暫不產生 COPD 維持治療建議';
+    out.sub = '先確認 COPD 診斷與肺功能資料';
+    out.reasons.push('COPD 診斷尚未確認。');
+    out.alerts.push('DX-UNCONFIRMED');
+    out.carbonAllowed = false;
+    return out;
+  }
+  const ratio = n(s.fevRatio);
+  if (has(ratio) && ratio >= 0.7) {
+    out.dataGaps.push('post-BD FEV₁/FVC ≥0.70，與固定比值診斷門檻不一致，請確認肺功能與診斷。');
+    out.alerts.push('DX-RATIO-CONFLICT');
+  }
+
+  // ── 閘門 2：資料充足性（D0 修正）──
+  const initial = s.reviewReason === 'initial' || current === 'none';
+  if (initial && g.group === 'UNASSESSED') {
+    out.title = '症狀評估未完成，無法判定 GOLD 分組';
+    out.sub = 'Initial treatment · 資料不足';
+    out.reasons.push(g.basis);
+    out.reasons.push('系統不以缺失值推估分組；請補齊 CAT 或 mMRC 後重新評估。');
+    out.alerts.push('GOLD-UNASSESSED', 'DATA-INSUFFICIENT');
+    out.gaps = nonPharmGaps(s);
+    out.carbonAllowed = false;
+    return out;
+  }
+
+  if (asthma) push('ASTHMA-ICS', '合併 asthma：GOLD 2026 指出應以氣喘方式治療，ICS 為必要成分，不得撤除；後續須同時依 asthma guideline。');
+
+  // ── 初始治療 ──
+  if (initial) {
+    out.sub = `Initial treatment · GOLD ${g.group}`;
+    if (g.group === 'A') {
+      out.title = 'Bronchodilator';
+      out.reasons.push(g.basis);
+      push('ESC-INITIAL', 'Group A：GOLD 2026 建議支氣管擴張劑；本系統不自動選定短效或長效品項。');
+    } else if (g.group === 'B') {
+      out.class = 'LABA/LAMA'; out.title = 'LABA/LAMA';
+      out.reasons.push(g.basis);
+      out.alerts.push('ESC-INITIAL');
+    } else {
+      out.reasons.push(g.basis);
+      if (asthma || (has(eos) && eos >= T.initial_triple_eos)) {
+        out.class = 'ICS/LABA/LAMA'; out.title = 'Consider LABA/LAMA/ICS';
+        if (has(eos) && eos >= T.initial_triple_eos)
+          out.reasons.push(`嗜酸性球 ${eos} ≥${T.initial_triple_eos} cells/μL：支持考慮初始三合一治療。`);
+        if (asthma) out.reasons.push('合併 asthma：ICS 必須保留。');
+      } else {
+        out.class = 'LABA/LAMA'; out.title = 'LABA/LAMA';
+        out.reasons.push(has(eos)
+          ? `嗜酸性球 ${eos} cells/μL，未達初始三合一之 ≥${T.initial_triple_eos} 門檻；GOLD 2026 初始治療仍以雙支氣管擴張為首選。`
+          : `嗜酸性球未取得；初始治療以雙支氣管擴張為首選，取得後再評估是否加 ICS。`);
+        if (!has(eos)) out.dataGaps.push('嗜酸性球未取得，無法評估初始三合一適應症。');
+      }
+      out.alerts.push('ESC-INITIAL');
+    }
+
+  // ── 追蹤：穩定 ──
+  } else if (s.reviewReason === 'stable') {
+    out.title = 'Continue current treatment';
+    out.sub = 'Follow-up · response adequate';
+    out.reasons.push('目前以穩定續方為主要目的，未觸發呼吸困難或惡化調整路徑。');
+    push('CARBON-SUPPRESSED', '如需更換裝置或分子，可使用「比較臨床等價選項」；本系統不因碳排要求換藥。');
+
+  // ── 追蹤：呼吸困難路徑 ──
+  } else if (s.reviewReason === 'dyspnea') {
+    out.sub = 'Follow-up · persistent dyspnea';
+    if (current === 'LABA' || current === 'LAMA') {
+      out.class = 'LABA/LAMA'; out.title = 'LABA/LAMA';
+      out.reasons.push(`目前為 ${current} 單一長效支氣管擴張劑。`);
+      out.reasons.push('GOLD 2026 呼吸困難路徑：持續呼吸困難可升級為雙支氣管擴張。');
+      out.alerts.push('ESC-DUAL');
+    } else if (current === 'LABA/LAMA') {
+      out.title = 'Review device / molecule before adding therapy';
+      out.reasons.push('目前已為 LABA/LAMA。');
+      out.reasons.push('先確認吸入技術、依從性、裝置適配與其他呼吸困難原因。');
+      push('ESC-DUAL', 'GOLD 2026：可考慮更換吸入裝置或分子、加入 ensifentrine、強化非藥物治療，並評估其他呼吸困難原因。');
+    } else if (current === 'ICS/LABA') {
+      out.class = asthma ? 'ICS/LABA/LAMA' : 'LABA/LAMA';
+      out.title = asthma ? 'Consider LABA/LAMA/ICS' : 'Consider LABA/LAMA';
+      out.reasons.push('目前為 ICS/LABA；COPD 呼吸困難路徑的主要目標是最佳化支氣管擴張。');
+      if (asthma) out.reasons.push('合併 asthma，ICS 不得撤除。');
+    } else if (current === 'ICS/LABA/LAMA') {
+      out.title = 'Review device, adherence and other causes';
+      out.reasons.push('目前已為三合一治療；持續呼吸困難不應只以再增加吸入藥物處理。');
+      push('ESC-DUAL', '考慮裝置／分子更換、ensifentrine、肺復健、其他心肺共病與非藥物治療。');
+    } else {
+      out.title = 'Clinical review required';
+      out.reasons.push('目前維持治療無法對應標準 GOLD follow-up 方框。');
+    }
+
+  // ── 追蹤：惡化路徑 ──
+  } else {
+    out.sub = 'Follow-up · exacerbation prevention';
+    const exBurdenHigh = (has(mod) && mod >= 2) || (has(sev) && sev >= 1);
+
+    if (current === 'LABA' || current === 'LAMA') {
+      // ⚠ D3 修正：追蹤路徑一律用 followup_ics_eos（100），不用初始門檻（300）
+      if (asthma || (has(eos) && eos >= T.followup_ics_eos)) {
+        out.class = 'ICS/LABA/LAMA'; out.title = 'Consider LABA/LAMA/ICS';
+        out.reasons.push(`目前 ${current} 仍發生中度／重度惡化。`);
+        if (has(eos) && eos >= T.followup_ics_eos)
+          out.reasons.push(`嗜酸性球 ${eos} ≥${T.followup_ics_eos} cells/μL（追蹤治療門檻），支持加入 ICS。`);
+        if (asthma) out.reasons.push('合併 asthma：ICS 必須保留。');
+        out.alerts.push('ESC-TRIPLE');
+      } else {
+        out.class = 'LABA/LAMA'; out.title = 'LABA/LAMA';
+        out.reasons.push(`目前 ${current} 仍發生中度／重度惡化，先升級為雙支氣管擴張。`);
+        out.alerts.push('ESC-DUAL');
+      }
+
+    } else if (current === 'LABA/LAMA') {
+      if (asthma || (has(eos) && eos >= T.followup_ics_eos)) {
+        out.class = 'ICS/LABA/LAMA'; out.title = 'Consider LABA/LAMA/ICS';
+        out.reasons.push('目前 LABA/LAMA 仍有中度／重度惡化。');
+        if (has(eos) && eos >= T.followup_ics_eos)
+          out.reasons.push(`嗜酸性球 ${eos} ≥${T.followup_ics_eos} cells/μL，支持 ICS 升階。`);
+        if (asthma) out.reasons.push('合併 asthma：ICS 必須保留。');
+        out.alerts.push('ESC-TRIPLE');
+      } else if (!has(eos)) {
+        out.title = 'Blood eosinophil count required';
+        out.reasons.push('目前 LABA/LAMA 仍有惡化，但嗜酸性球未取得，無法判定是否應加 ICS。');
+        out.dataGaps.push('請先取得血中嗜酸性球絕對值（LOINC 711-2）。');
+        out.alerts.push('DATA-INSUFFICIENT');
+      } else {
+        // ⚠ D2 修正：eos<100 不再是「不用 ICS」的硬分支
+        out.title = 'Individualise ICS decision';
+        out.reasons.push(`目前 LABA/LAMA 仍有惡化，嗜酸性球 ${eos} <${T.followup_ics_eos} cells/μL，ICS 的平均效益較低。`);
+        out.reasons.push('⚠ GOLD 2026：嗜酸性球低於 100 cells/μL **不得作為排除 ICS 的唯一理由**。' +
+                         'ICS 決策應整合惡化史、疾病嚴重度與整體臨床情境。');
+        out.alerts.push('ICS-LOW-EOS');
+        if (exBurdenHigh) {
+          out.class = 'ICS/LABA/LAMA';
+          push('ICS-LOW-EOS', `⚠ 本例惡化負擔較高（${mod ?? 0} 次中度 / ${sev ?? 0} 次重度）：` +
+               `GOLD 2026 指出惡化頻繁或嚴重者即使嗜酸性球偏低仍可能需要 ICS，已列出三合一候選供評估。`);
+        } else {
+          push('ICS-LOW-EOS', '惡化負擔不高：可先評估非 ICS 選項（見下方進階建議），並記錄 ICS 決策理由。');
+        }
+      }
+
+    } else if (current === 'ICS/LABA') {
+      out.class = 'ICS/LABA/LAMA'; out.title = 'Consider LABA/LAMA/ICS';
+      out.reasons.push('目前 ICS/LABA 仍發生惡化；有 ICS 適應症時 GOLD 偏好三合一而非 LABA+ICS。');
+      out.alerts.push('ESC-TRIPLE');
+
+    } else if (current === 'ICS/LABA/LAMA') {
+      out.title = 'Advanced exacerbation review';
+      out.reasons.push('目前已為三合一治療且仍有惡化。');
+
+    } else {
+      out.title = 'Clinical review required';
+      out.reasons.push('目前維持治療無法直接對應 GOLD follow-up 方框。');
+    }
+
+    advancedOptions(s, out);
+  }
+
+  icsWithdrawal(s, out);
+  out.gaps = nonPharmGaps(s);
+  if (out.gaps.length) out.alerts.push('GAP-NONPHARM');
+
+  // ── 裝置適配閘門：未確認時不顯示碳排（非補償性原則）──
+  const fits = [s.fitDPI, s.fitSMI, s.fitPMDI];
+  const anyConfirmed = fits.some(f => f && f !== 'unknown');
+  out.carbonAllowed = !!(out.class && anyConfirmed);
+  if (out.class && !anyConfirmed) {
+    out.dataGaps.push('裝置適配尚未評估（DPI／SMI／pMDI 三項皆為未確認）：' +
+                      '已隱藏碳足跡排序，避免在臨床條件未確立前產生錨定。');
+    out.alerts.push('DEVICE-UNCONFIRMED');
+  }
+
+  out.pathway = initial ? 'Initial' : 'Follow-up';
+  return out;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   產品：裝置適配 → 碳足跡分帶（永不跨臨床類別）
+   ══════════════════════════════════════════════════════════════ */
+function deviceFit(device, s, p) {
+  const st = ({ DPI: s.fitDPI, SMI: s.fitSMI, pMDI: s.fitPMDI })[device] || 'unknown';
+  if (st === 'no') return { rank: 4, label: '不適合', cls: 'no' };
+  // DPI：吸氣流速為非補償性閘門（Grandmaison 2024；文獻以 In-Check DIAL 依裝置阻力實測）
+  if (device === 'DPI' && p) {
+    const pif = n(s.pif);
+    const min = p.pif_min || 30, opt = p.pif_opt || 60;
+    if (has(pif) && pif < min) return { rank: 4, label: `吸氣流速不足（${pif} < ${min} L/min）`, cls: 'no' };
+    if (!has(pif) && p.resistance === 'high' && st === 'yes')
+      return { rank: 2, label: '高阻力裝置，需先實測 PIF', cls: 'unknown' };
+    if (has(pif) && pif < opt && st !== 'unknown')
+      return { rank: 1, label: `PIF ${pif} L/min 偏低，需加強吸入技術`, cls: 'unknown' };
+  }
+  if (st === 'yes')    return { rank: 0, label: '適合',     cls: 'ok' };
+  if (st === 'spacer') return { rank: 1, label: '需 spacer', cls: 'unknown' };
+  return { rank: 2, label: '未確認',   cls: 'unknown' };
+}
+
+/** 取得本院實際供應配方的碳足跡。配方未確認時回傳 null，不猜測。 */
+function carbonOf(p) {
+  if (!p.local_supply_formulation)
+    return { known: false, note: '配方版本未確認（推進劑轉換中）', band: null };
+  const f = (p.formulations || []).find(x => x.id === p.local_supply_formulation);
+  if (!f || f.carbon_mid === null)
+    return { known: false, note: '本配方尚無碳足跡資料', band: null, propellant: f && f.propellant };
+  const perYear = f.carbon_mid * (365 / (p.actuations_per_device / p.actuations_per_day));
+  const band = PRODUCTS.bands.find(b => f.carbon_mid < b.max);
+  return { known: true, perDeviceLow: f.carbon_low, perDeviceMid: f.carbon_mid, perDeviceHigh: f.carbon_high,
+           perYear, band, propellant: f.propellant, evidence: f.evidence, source: f.source };
+}
+
+/**
+ * 候選產品清單。
+ * 排序：裝置適配（非補償性）→ 碳足跡分帶 → 名稱。⚠ 帶內不依小數排序。
+ */
+function candidates(cls, s) {
+  if (!cls) return [];
+  return PRODUCTS.products
+    .filter(p => p.copd_candidate && p.cls === cls)
+    .map(p => ({ ...p, fit: deviceFit(p.device, s, p), carbon: carbonOf(p) }))
+    .sort((a, b) => {
+      if (a.fit.rank !== b.fit.rank) return a.fit.rank - b.fit.rank;   // ① 裝置優先
+      const ai = a.carbon.band ? PRODUCTS.bands.indexOf(a.carbon.band) : 99;
+      const bi = b.carbon.band ? PRODUCTS.bands.indexOf(b.carbon.band) : 99;
+      if (ai !== bi) return ai - bi;                                    // ② 碳分帶
+      return a.name.localeCompare(b.name);                              // ③ 帶內不排名
+    });
+}
+
+return { evaluate, calcGold, candidates, deviceFit, carbonOf, RULES, PRODUCTS };
+
+}));
+</script>
+<script>
+const ATLAS = [{"no": 1, "name": "SALAMOL CFC-FREE INHALER", "zh": "莫喘泰 定量噴霧劑", "nhi": "B023625138", "cls": "SABA", "device": "pMDI", "ev": "C", "lo": 28.0, "mid": 28.0, "hi": 28.0, "q": 0.0, "t": 0, "mol": "salbutamol", "map": "Salbutamol HFA pMDI類別代理｜以 Ventolin HFA 值代理", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 2, "name": "Synvent HFA 100 (Albuterol 100mcg) lnhaler", "zh": "欣泛定量噴霧劑", "nhi": "AC57808138", "cls": "SABA", "device": "pMDI", "ev": "C", "lo": 28.0, "mid": 28.0, "hi": 28.0, "q": 14057.1, "t": 393.6, "mol": "salbutamol", "map": "Salbutamol HFA pMDI類別代理｜以 Ventolin HFA 值代理", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 3, "name": "VENTOLIN INHALER", "zh": "泛得林定量噴霧劑", "nhi": "BC17528138", "cls": "SABA", "device": "pMDI", "ev": "A", "lo": 28.0, "mid": 28.0, "hi": 28.0, "q": 77546.8, "t": 2171.3, "mol": "salbutamol", "map": "直接產品資料｜對應 Ventolin inhaler", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 4, "name": "VENTOLIN INHALER", "zh": "泛得林定量噴霧劑", "nhi": "BC17528126", "cls": "SABA", "device": "pMDI", "ev": "A", "lo": 28.0, "mid": 28.0, "hi": 28.0, "q": 223.0, "t": 6.24, "mol": "salbutamol", "map": "直接產品資料｜對應 Ventolin inhaler", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 5, "name": "VENTOLIN INHALER", "zh": "泛得林定量噴霧劑", "nhi": "B017528138", "cls": "SABA", "device": "pMDI", "ev": "A", "lo": 28.0, "mid": 28.0, "hi": 28.0, "q": 1.0, "t": 0.03, "mol": "salbutamol", "map": "直接產品資料｜對應 Ventolin inhaler", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 6, "name": "BEROTEC N 100MCG/PUFF METERED AEROSOL", "zh": "備勞喘１００微公克定量噴霧液", "nhi": "BC23074163", "cls": "SABA", "device": "pMDI", "ev": "B", "lo": 16.0, "mid": 16.48, "hi": 17.0, "q": 336626.8, "t": 5549.0, "mol": "fenoterol", "map": "公開產品估計｜對應 Berotec N 100mcg pMDI", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13387197/"}, {"no": 7, "name": "BEROTEC N 100MCG/PUFF METERED AEROSOL", "zh": "備勞喘１００微公克定量噴霧液", "nhi": "B023074163", "cls": "SABA", "device": "pMDI", "ev": "B", "lo": 16.0, "mid": 16.48, "hi": 17.0, "q": 4.0, "t": 0.07, "mol": "fenoterol", "map": "公開產品估計｜對應 Berotec N 100mcg pMDI", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13387197/"}, {"no": 8, "name": "BEROTEC 200 METERED DOSE INHALEN 15ML (FENOTERQL BROMIDE)", "zh": "備勞喘２００定量噴霧液（菲諾特洛氫溴酸鹽）", "nhi": "A035834135", "cls": "SABA", "device": "pMDI", "ev": "C-R", "lo": 160.0, "mid": 192.5, "hi": 220.0, "q": 106.5, "t": 20.5, "mol": "fenoterol", "map": "Historical CFC-pMDI proxy｜舊型 300-dose fenoterol CFC MDI，依歷史 CFC pMDI 配方重建；非直接 LCA", "src": "UNEP/EPA CFC GWP + historical CFC pMDI reconstruction；v5.4 C-R"}, {"no": 9, "name": "MEPTIN AIR 10ug", "zh": "滅喘淨噴霧劑", "nhi": "B017634121", "cls": "SABA", "device": "pMDI", "ev": "C-R", "lo": 50.0, "mid": 64.0, "hi": 80.0, "q": 0.0, "t": 0, "mol": "procaterol", "map": "Historical CFC-pMDI proxy｜Meptin Air 舊型為 procaterol CFC MDI；100-dose class reconstruction", "src": "UNEP Japan essential-use report + historical CFC pMDI reconstruction；v5.4 C-R"}, {"no": 10, "name": "BRICANYL TURBUHALER 0.5MG/DOSE", "zh": "撲咳喘都保定量粉狀吸入劑0.5毫克/劑量", "nhi": "BC22082155", "cls": "SABA", "device": "DPI", "ev": "C", "lo": 0.5, "mid": 0.59, "hi": 0.65, "q": 3.0, "t": 0, "mol": "terbutaline", "map": "Turbuhaler裝置家族代理｜Turbuhaler 家族代理", "src": "https://www.medrxiv.org/content/10.1101/2025.07.12.25331451v1"}, {"no": 11, "name": "BRICANYL TURBUHALER 0.5MG/DOSE", "zh": "撲咳喘都保定量粉狀吸入劑0.5毫克/劑量", "nhi": "BC22082148", "cls": "SABA", "device": "DPI", "ev": "C", "lo": 0.5, "mid": 0.59, "hi": 0.65, "q": 0.0, "t": 0, "mol": "terbutaline", "map": "Turbuhaler裝置家族代理｜Turbuhaler 家族代理", "src": "https://www.medrxiv.org/content/10.1101/2025.07.12.25331451v1"}, {"no": 12, "name": "BRICANYL TURBUHALER 0.5MG/DOSE", "zh": "撲咳喘都保定量粉狀吸入劑0.5毫克/劑量", "nhi": "B022082155", "cls": "SABA", "device": "DPI", "ev": "C", "lo": 0.5, "mid": 0.59, "hi": 0.65, "q": 0.0, "t": 0, "mol": "terbutaline", "map": "Turbuhaler裝置家族代理｜Turbuhaler 家族代理", "src": "https://www.medrxiv.org/content/10.1101/2025.07.12.25331451v1"}, {"no": 13, "name": "BUVENTOL EASYHALER 200MCG/DOSE INHALATION POWDER", "zh": "肺舒妥乾粉吸入劑２００ＭＣＧ/ＤＯＳＥ", "nhi": "BC21144145", "cls": "SABA", "device": "DPI", "ev": "B", "lo": 0.59, "mid": 0.59, "hi": 0.65, "q": 44.0, "t": 0.03, "mol": "salbutamol", "map": "Easyhaler 產品家族 LCA｜Salbutamol Easyhaler 2023：0.5868 kg CO₂e/device", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10721773/"}, {"no": 14, "name": "BERODUAL N METERED AEROSOL", "zh": "備喘全定量噴霧液 \"德國廠\"", "nhi": "BC23473129", "cls": "SABA/SAMA", "device": "pMDI", "ev": "B", "lo": 16.48, "mid": 16.48, "hi": 16.48, "q": 134863.1, "t": 2223.1, "mol": "fenoterol+ipratropium", "map": "台灣已發表產品/配方pMDI碳排估計｜台灣2024研究直接列Fenoterol/Ipratropium pMDI（Berodual）16.484 kg CO2e/pack", "src": "https://doi.org/10.1088/2515-7620/ad9818"}, {"no": 16, "name": "BERODUAL METERED AEROSOL", "zh": "備喘全定量噴霧液", "nhi": "A029201135", "cls": "SABA/SAMA", "device": "pMDI", "ev": "C-R", "lo": 160.0, "mid": 192.5, "hi": 220.0, "q": 30.0, "t": 5.8, "mol": "fenoterol+ipratropium", "map": "Historical CFC-pMDI proxy｜舊型 Berodual 300-dose，CFC-11/12/114 formulation proxy", "src": "EU/UNEP CFC formulation records + CFC GWP reconstruction；v5.4 C-R"}, {"no": 17, "name": "COMBIVENT METERED AEROSOL", "zh": "冠喘衛定量噴霧液", "nhi": "A044074129", "cls": "SABA/SAMA", "device": "pMDI", "ev": "C-R", "lo": 120.0, "mid": 128.3, "hi": 140.0, "q": 0.0, "t": 0, "mol": "salbutamol+ipratropium", "map": "Historical formulation reconstruction｜Combivent 200-actuation CFC MDI，依 CFC-11/12/114 克數換算", "src": "Combivent label + US5603918A formulation + EPA/UNEP CFC GWP；v5.4 C-R"}, {"no": 18, "name": "DUASMA METERED DOSE INHALER 200MCG", "zh": "帝舒滿定量噴霧液２００微公克", "nhi": "AC43323145", "cls": "ICS", "device": "pMDI", "ev": "C", "lo": 16.39, "mid": 20.35, "hi": 23.1, "q": 2.0, "t": 0.04, "mol": "budesonide", "map": "HFA-134a ICS pMDI類別代理｜對應 Duasma HFA", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 19, "name": "DUASMA METERED DOSE INHALER 200MCG", "zh": "帝舒滿定量噴霧液２００微公克", "nhi": "A043323151", "cls": "ICS", "device": "pMDI", "ev": "C", "lo": 16.39, "mid": 20.35, "hi": 23.1, "q": 0.0, "t": 0, "mol": "budesonide", "map": "HFA-134a ICS pMDI類別代理｜對應 Duasma HFA", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 20, "name": "Duasma HFA 200 (Budesonide 200mcg) Inhaler", "zh": "帝舒滿定量噴霧劑", "nhi": "AA57770145", "cls": "ICS", "device": "pMDI", "ev": "C", "lo": 16.39, "mid": 20.35, "hi": 23.1, "q": 57513.7, "t": 1170.4, "mol": "budesonide", "map": "HFA-134a ICS pMDI類別代理｜對應 Duasma HFA", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 21, "name": "Duasma HFA 200 (Budesonide 200mcg) Inhaler", "zh": "帝舒滿定量噴霧劑", "nhi": "A057770145", "cls": "ICS", "device": "pMDI", "ev": "C", "lo": 16.39, "mid": 20.35, "hi": 23.1, "q": 0.0, "t": 0, "mol": "budesonide", "map": "HFA-134a ICS pMDI類別代理｜對應 Duasma HFA", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 22, "name": "FLIXOTIDE EVOHALER 250MCG", "zh": "輔舒酮優氟吸入劑２５０微公克／劑量", "nhi": "B023753135", "cls": "ICS", "device": "pMDI", "ev": "B", "lo": 19.8, "mid": 19.8, "hi": 19.8, "q": 0.0, "t": 0, "mol": "fluticasone propionate", "map": "Fluticasone pMDI產品代理｜對應 Flixotide Evohaler", "src": "https://jamanetwork.com/journals/jama/fullarticle/2839471"}, {"no": 23, "name": "FLIXOTIDE EVOHALER 50MCG", "zh": "輔舒酮 優氟 吸入劑５０微公克／劑量", "nhi": "BC23755123", "cls": "ICS", "device": "pMDI", "ev": "B", "lo": 17.7, "mid": 17.7, "hi": 19.8, "q": 56572.1, "t": 1001.3, "mol": "fluticasone propionate", "map": "Fluticasone pMDI 產品特定資料｜Fluticasone propionate 50 mcg Evohaler 17.7 kg/can", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12482071/"}, {"no": 24, "name": "FLIXOTIDE EVOHALER 50MCG", "zh": "輔舒酮 優氟 吸入劑５０微公克／劑量", "nhi": "B023755123", "cls": "ICS", "device": "pMDI", "ev": "B", "lo": 17.7, "mid": 17.7, "hi": 19.8, "q": 2.0, "t": 0.04, "mol": "fluticasone propionate", "map": "Fluticasone pMDI 產品特定資料｜Fluticasone propionate 50 mcg Evohaler 17.7 kg/can", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12482071/"}, {"no": 25, "name": "Alvesco 160 Inhaler", "zh": "\"保衛康\"治喘樂吸入劑 160 微公克", "nhi": "BC24786151", "cls": "ICS", "device": "pMDI", "ev": "B", "lo": 10.8, "mid": 10.95, "hi": 11.1, "q": 41949.4, "t": 459.3, "mol": "ciclesonide", "map": "產品特定公開估計｜對應 Alvesco", "src": "https://jamanetwork.com/journals/jama/fullarticle/2839471"}, {"no": 26, "name": "FLIXOTIDE 50 INHALER", "zh": "輔舒酮 吸入劑５０微公克／DOSE", "nhi": "B021476116", "cls": "ICS", "device": "pMDI", "ev": "C-P", "lo": 15.2, "mid": 15.2, "hi": 17.7, "q": 0.0, "t": 0, "mol": "fluticasone propionate", "map": "Flixotide HFA / historical product-family proxy｜60-dose舊品項；2025無量，保守以HFA-134a下界與Evohaler上界", "src": "ANSM Flixotide 50 HFA-134a 10.6g + Flixotide Evohaler 17.7 kg；v5.4 C-P"}, {"no": 27, "name": "FLIXOTIDE TM ACCUHALER TM 250MCG/DOSE", "zh": "輔舒酮ＴＭ準納ＴＭ乾粉吸入劑２５０微公克／ＤＯＳＥ", "nhi": "BC21921135", "cls": "ICS", "device": "DPI", "ev": "C", "lo": 0.6, "mid": 1.25, "hi": 1.25, "q": 6300.7, "t": 7.88, "mol": "fluticasone propionate", "map": "Accuhaler裝置家族代理｜Accuhaler 家族代理", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 28, "name": "FLIXOTIDE TM ACCUHALER TM 250MCG/DOSE", "zh": "輔舒酮ＴＭ準納ＴＭ乾粉吸入劑２５０微公克／ＤＯＳＥ", "nhi": "B021921135", "cls": "ICS", "device": "DPI", "ev": "C", "lo": 0.6, "mid": 1.25, "hi": 1.25, "q": 1.0, "t": 0, "mol": "fluticasone propionate", "map": "Accuhaler裝置家族代理｜Accuhaler 家族代理", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 29, "name": "FLIXOTIDE TM ACCUHALER TM 50MCG/DOSE", "zh": "輔舒銅ＴＭ準納ＴＭ乾粉吸入劑５０微公克／DOSE", "nhi": "B021922116", "cls": "ICS", "device": "DPI", "ev": "C", "lo": 0.6, "mid": 1.25, "hi": 1.25, "q": 11.0, "t": 0.01, "mol": "fluticasone propionate", "map": "Accuhaler裝置家族代理｜Accuhaler 家族代理", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 30, "name": "PULMICORT TURBUHALER 200 MICROGRAMS/DOSE", "zh": "可滅喘都保定量粉狀吸入劑２００微公克／劑量", "nhi": "BC21989138", "cls": "ICS", "device": "DPI", "ev": "C", "lo": 0.5, "mid": 0.59, "hi": 0.65, "q": 160.0, "t": 0.09, "mol": "budesonide", "map": "Turbuhaler裝置家族代理｜Turbuhaler 家族代理", "src": "https://www.medrxiv.org/content/10.1101/2025.07.12.25331451v1"}, {"no": 31, "name": "PULMICORT TURBUHALER 200 MICROGRAMS/DOSE", "zh": "可滅喘都保定量粉狀吸入劑２００微公克／劑量", "nhi": "BC21989145", "cls": "ICS", "device": "DPI", "ev": "C", "lo": 0.5, "mid": 0.59, "hi": 0.65, "q": 17.0, "t": 0.01, "mol": "budesonide", "map": "Turbuhaler裝置家族代理｜Turbuhaler 家族代理", "src": "https://www.medrxiv.org/content/10.1101/2025.07.12.25331451v1"}, {"no": 32, "name": "BECLOMET EASYHALER 200MCG/DOSE", "zh": "必克喘乾粉吸入劑２００ＭＣＧ／ＤＯＳＥ", "nhi": "BC21218145", "cls": "ICS", "device": "DPI", "ev": "B", "lo": 0.58, "mid": 0.58, "hi": 0.65, "q": 50.0, "t": 0.03, "mol": "beclometasone", "map": "Easyhaler 產品家族 LCA｜Beclomethasone Easyhaler 2023：0.5777 kg CO₂e/device", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10721773/"}, {"no": 33, "name": "GIONA EASYHALER 200MCG/DOSE", "zh": "治爾喘 乾粉吸入劑200微公克/劑量", "nhi": "B024280145", "cls": "ICS", "device": "DPI", "ev": "B", "lo": 0.62, "mid": 0.62, "hi": 0.65, "q": 0.0, "t": 0, "mol": "beclometasone", "map": "Easyhaler 產品家族 LCA｜Budesonide Easyhaler 2023：0.6170 kg CO₂e/device", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10721773/"}, {"no": 34, "name": "Striverdi Respimat 2.5 microgram Solution for Inhalation", "zh": "適維樂舒沛噴吸入劑2.5微公克", "nhi": "BC26292443", "cls": "LABA", "device": "SMI", "ev": "B", "lo": 0.78, "mid": 0.78, "hi": 0.78, "q": 6818.0, "t": 5.28, "mol": "olodaterol", "map": "Respimat裝置家族代理｜Respimat 家族代理", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6822840/"}, {"no": 35, "name": "Onbrez Breezhaler 150 mcg inhalation powder, hard capsule", "zh": "昂舒吸入膠囊150微克", "nhi": "BC25282443", "cls": "LABA", "device": "DPI", "ev": "B", "lo": 0.18, "mid": 0.36, "hi": 0.48, "q": 4943.0, "t": 1.77, "mol": "indacaterol", "map": "Breezhaler產品/裝置家族｜Breezhaler 家族", "src": "https://www.mdpi.com/2071-1050/13/12/6657"}, {"no": 36, "name": "Spiriva Respimat 2.5mcg, Solution for Inhalation", "zh": "適喘樂舒沛噴吸入劑 2.5 微公克", "nhi": "BC25033161", "cls": "LAMA", "device": "SMI", "ev": "A", "lo": 0.78, "mid": 0.78, "hi": 0.78, "q": 274018.5, "t": 212.4, "mol": "tiotropium", "map": "直接產品/裝置LCA｜對應 Spiriva Respimat", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6822840/"}, {"no": 37, "name": "Spiriva Respimat 2.5mcg, Solution for Inhalation", "zh": "適喘樂舒沛噴吸入劑 2.5 微公克", "nhi": "B025033161", "cls": "LAMA", "device": "SMI", "ev": "A", "lo": 0.78, "mid": 0.78, "hi": 0.78, "q": 0.0, "t": 0, "mol": "tiotropium", "map": "直接產品/裝置LCA｜對應 Spiriva Respimat", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6822840/"}, {"no": 38, "name": "Incruse Ellipta 55 mcg Inhalation Powder", "zh": "英克賜易利達55 mcg乾粉吸入劑", "nhi": "BC26500143", "cls": "LAMA", "device": "DPI", "ev": "B", "lo": 0.4, "mid": 0.77, "hi": 0.8, "q": 10517.0, "t": 8.05, "mol": "umeclidinium", "map": "Ellipta裝置家族代理｜Ellipta 家族代理", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 39, "name": "Seebri Breezhaler 50 microgram, inhalation powder hard capsules", "zh": "吸補力吸入膠囊50微克", "nhi": "BC26157400", "cls": "LAMA", "device": "DPI", "ev": "B", "lo": 0.18, "mid": 0.36, "hi": 0.48, "q": 6.0, "t": 0, "mol": "glycopyrronium", "map": "Breezhaler產品/裝置家族｜Breezhaler 家族", "src": "https://www.mdpi.com/2071-1050/13/12/6657"}, {"no": 40, "name": "SPIRIVA 18uG, INHALATION POWDER, HARD CAPSULE WITH HANDIHALER DEVICE", "zh": "適喘樂易得噴吸入劑", "nhi": "B0237061E4", "cls": "LAMA", "device": "DPI", "ev": "C-P", "lo": 0.79, "mid": 0.79, "hi": 0.79, "q": 0.0, "t": 0, "mol": "tiotropium", "map": "DPI product/device proxy｜Spiriva HandiHaler 30-dose DPI 公開產品估計，非直接 LCA", "src": "JAMA 2024 product-level inhaler carbon table；v5.4 C-P"}, {"no": 41, "name": "Bevespi Aerosphere 7.2/5.0 micrograms Pressurised Inhalation, Suspension", "zh": "必肺宜氣化噴霧劑7.2/5.0微克/劑量", "nhi": "BC27524457", "cls": "LABA/LAMA", "device": "pMDI", "ev": "B", "lo": 17.8, "mid": 17.8, "hi": 25.3, "q": 93015.2, "t": 1655.7, "mol": "glycopyrronium+formoterol", "map": "產品估計/研究範圍｜對應 Bevespi", "src": "https://jamanetwork.com/journals/jama/fullarticle/2822997"}, {"no": 42, "name": "Spiolto Respimat, Solution for Inhalation", "zh": "適倍樂 舒沛噴 吸入劑", "nhi": "BC26735443", "cls": "LABA/LAMA", "device": "SMI", "ev": "B", "lo": 0.78, "mid": 0.78, "hi": 0.78, "q": 345971.3, "t": 268.1, "mol": "tiotropium+olodaterol", "map": "Respimat裝置家族代理｜對應 Spiolto Respimat", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6822840/"}, {"no": 43, "name": "Anoro Ellipta 55/22 mcg inhalation Powder", "zh": "安肺樂易利達 55/22 mcg 乾粉吸入劑", "nhi": "BC26315143", "cls": "LABA/LAMA", "device": "DPI", "ev": "B", "lo": 0.4, "mid": 0.77, "hi": 0.8, "q": 241879.1, "t": 185.0, "mol": "umeclidinium+vilanterol", "map": "Ellipta裝置家族代理｜對應 Anoro Ellipta", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 44, "name": "Ultibro Breezhaler 110/50 microgram, inhalation powder hard capsules", "zh": "昂帝博吸入膠囊110/50微克", "nhi": "BC26301443", "cls": "LABA/LAMA", "device": "DPI", "ev": "B", "lo": 0.18, "mid": 0.36, "hi": 0.48, "q": 76629.1, "t": 27.5, "mol": "indacaterol+glycopyrronium", "map": "Breezhaler裝置家族代理｜對應 Ultibro Breezhaler", "src": "https://www.mdpi.com/2071-1050/13/12/6657"}, {"no": 45, "name": "Symbicort Rapihaler 160/4.5ug/dose", "zh": "\"吸必擴\"氣化噴霧劑 160/4.5 微克/劑量", "nhi": "BC266571E7", "cls": "ICS/LABA", "device": "pMDI", "ev": "B", "lo": 34.13, "mid": 34.4, "hi": 38.4, "q": 486053.5, "t": 16720.2, "mol": "budesonide+formoterol", "map": "產品驗證：120-dose Rapihaler 含 10.6 g HFC-227ea；推進劑物理下界約 34.13 kg CO₂e，主值 34.4 保留。", "src": "https://www.medicines.org.uk/emc/product/7223/pil；https://pmc.ncbi.nlm.nih.gov/articles/PMC13387197/"}, {"no": 46, "name": "Synbufo Inhaler 160/4.5 ug/dose", "zh": "欣必復氣化噴霧劑160/4.5微克/劑量", "nhi": "AC611641E7", "cls": "ICS/LABA", "device": "pMDI", "ev": "C", "lo": 23.5, "mid": 34.4, "hi": 38.4, "q": 58350.7, "t": 2007.3, "mol": "budesonide+formoterol", "map": "Budesonide/Formoterol pMDI 代理｜同成分不等於同罐體/推進劑量；待產品資料確認。", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13387197/；v5.3 proxy"}, {"no": 47, "name": "SERETIDE 125 EVOHALER", "zh": "使肺泰125優氟吸入劑", "nhi": "BC23482137", "cls": "ICS/LABA", "device": "pMDI", "ev": "B", "lo": 19.0, "mid": 19.0, "hi": 19.0, "q": 48039.5, "t": 912.8, "mol": "fluticasone propionate+salmeterol", "map": "直接產品/公開產品估計｜Seretide Evohaler 家族", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 48, "name": "SERETIDE 125 EVOHALER", "zh": "使肺泰125優氟吸入劑", "nhi": "B023482137", "cls": "ICS/LABA", "device": "pMDI", "ev": "B", "lo": 19.0, "mid": 19.0, "hi": 19.0, "q": 0.0, "t": 0, "mol": "fluticasone propionate+salmeterol", "map": "直接產品/公開產品估計｜Seretide Evohaler 家族", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 49, "name": "SERETIDE 250 EVOHALER", "zh": "使肺泰250優氟吸入劑", "nhi": "BC23481157", "cls": "ICS/LABA", "device": "pMDI", "ev": "A", "lo": 19.0, "mid": 19.0, "hi": 20.37, "q": 81812.8, "t": 1554.4, "mol": "fluticasone propionate+salmeterol", "map": "直接產品/公開產品估計｜Seretide Evohaler 家族", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 50, "name": "SERETIDE 250 EVOHALER", "zh": "使肺泰250優氟吸入劑", "nhi": "B023481157", "cls": "ICS/LABA", "device": "pMDI", "ev": "A", "lo": 19.0, "mid": 19.0, "hi": 20.37, "q": 0.0, "t": 0, "mol": "fluticasone propionate+salmeterol", "map": "直接產品/公開產品估計｜Seretide Evohaler 家族", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 51, "name": "SERETIDE 50 EVOHALER", "zh": "使肺泰50優氟吸入劑", "nhi": "BC23480127", "cls": "ICS/LABA", "device": "pMDI", "ev": "B", "lo": 19.0, "mid": 19.0, "hi": 19.0, "q": 49063.4, "t": 932.2, "mol": "fluticasone propionate+salmeterol", "map": "直接產品/公開產品估計｜Seretide Evohaler 家族", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 52, "name": "SERETIDE 50 EVOHALER", "zh": "使肺泰50優氟吸入劑", "nhi": "B023480127", "cls": "ICS/LABA", "device": "pMDI", "ev": "B", "lo": 19.0, "mid": 19.0, "hi": 19.0, "q": 3.0, "t": 0.06, "mol": "fluticasone propionate+salmeterol", "map": "直接產品/公開產品估計｜Seretide Evohaler 家族", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 53, "name": "SEROFLO 250 INHALER (CFC free)", "zh": "吸洛復250定量噴霧吸入劑", "nhi": "BC27767157", "cls": "ICS/LABA", "device": "pMDI", "ev": "C", "lo": 19.0, "mid": 19.0, "hi": 20.37, "q": 7174.0, "t": 136.3, "mol": "fluticasone propionate+salmeterol", "map": "Seretide同成分pMDI代理｜同成分 pMDI 代理", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 54, "name": "Sirdupla 25 microgram/ 125 microgram, per metered dose pressurised inhalation, suspension", "zh": "順肺坦125定量加壓驅動懸浮吸入劑", "nhi": "BC28036157", "cls": "ICS/LABA", "device": "pMDI", "ev": "C", "lo": 19.0, "mid": 19.0, "hi": 20.37, "q": 0.0, "t": 0, "mol": "fluticasone propionate+salmeterol", "map": "Seretide同成分pMDI代理｜同成分 pMDI 代理", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 55, "name": "Sirdupla 25 microgram/ 250 microgram, per metered dose pressurised inhalation, suspension", "zh": "順肺坦250定量加壓驅動懸浮吸入劑", "nhi": "BC28035157", "cls": "ICS/LABA", "device": "pMDI", "ev": "C", "lo": 19.0, "mid": 19.0, "hi": 20.37, "q": 3.0, "t": 0.06, "mol": "fluticasone propionate+salmeterol", "map": "Seretide同成分pMDI代理｜同成分 pMDI 代理", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 56, "name": "Foster", "zh": "肺舒坦定量吸入劑 100/6mcg/dose", "nhi": "BC250921FL", "cls": "ICS/LABA", "device": "pMDI", "ev": "A", "lo": 11.33, "mid": 11.3, "hi": 14.5, "q": 253261.1, "t": 2869.0, "mol": "beclometasone+formoterol", "map": "直接產品 LCA｜Foster 100/6：94.42 g CO₂e/actuation × 120 = 11.330 kg/device", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7173981/"}, {"no": 57, "name": "Flutiform 125/5mcg per actuation Pressurised, Inhalation, Suspension", "zh": "呼特康125/5微克加壓驅動懸浮吸入劑", "nhi": "BC26345157", "cls": "ICS/LABA", "device": "pMDI", "ev": "C", "lo": 36.5, "mid": 36.5, "hi": 36.85, "q": 5.0, "t": 0.18, "mol": "fluticasone propionate+formoterol", "map": "HFC-227ea pMDI proxy｜Flutiform 類 HFA-227ea 120-actuation pMDI 約 36.5 kg/device", "src": "https://www.mdpi.com/2071-1050/14/12/7106；https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 58, "name": "Flutiform 250/10mcg per actuation Pressurised, Inhalation, Suspension", "zh": "呼特康250/10微克加壓驅動懸浮吸入劑", "nhi": "BC26344157", "cls": "ICS/LABA", "device": "pMDI", "ev": "C", "lo": 36.5, "mid": 36.5, "hi": 36.85, "q": 0.0, "t": 0, "mol": "fluticasone propionate+formoterol", "map": "HFC-227ea pMDI proxy｜Flutiform 類 HFA-227ea 120-actuation pMDI 約 36.5 kg/device", "src": "https://www.mdpi.com/2071-1050/14/12/7106；https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 59, "name": "Flutiform 50/5mcg per actuation Pressurised, Inhalation, Suspension", "zh": "呼特康50/5微克加壓驅動懸浮吸入劑", "nhi": "BC26343157", "cls": "ICS/LABA", "device": "pMDI", "ev": "C", "lo": 36.5, "mid": 36.5, "hi": 36.85, "q": 0.0, "t": 0, "mol": "fluticasone propionate+formoterol", "map": "HFC-227ea pMDI proxy｜Flutiform 類 HFA-227ea 120-actuation pMDI 約 36.5 kg/device", "src": "https://www.mdpi.com/2071-1050/14/12/7106；https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 60, "name": "SERETIDE 100 ACCUHALER INHALATION POWDER", "zh": "使肺泰１００準納 乾粉吸入劑", "nhi": "BC23202127", "cls": "ICS/LABA", "device": "DPI", "ev": "B", "lo": 0.6, "mid": 1.25, "hi": 1.25, "q": 12497.0, "t": 15.6, "mol": "fluticasone propionate+salmeterol", "map": "Accuhaler產品/裝置代理｜Seretide Accuhaler 家族", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 61, "name": "SERETIDE 100 ACCUHALER INHALATION POWDER", "zh": "使肺泰１００準納 乾粉吸入劑", "nhi": "B023202127", "cls": "ICS/LABA", "device": "DPI", "ev": "B", "lo": 0.6, "mid": 1.25, "hi": 1.25, "q": 0.0, "t": 0, "mol": "fluticasone propionate+salmeterol", "map": "Accuhaler產品/裝置代理｜Seretide Accuhaler 家族", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 62, "name": "SERETIDE 250 ACCUHALER INHALATION POWDER", "zh": "使肺泰２５０準納乾粉吸入劑", "nhi": "BC23203137", "cls": "ICS/LABA", "device": "DPI", "ev": "B", "lo": 0.6, "mid": 1.25, "hi": 1.25, "q": 18547.6, "t": 23.2, "mol": "fluticasone propionate+salmeterol", "map": "Accuhaler產品/裝置代理｜Seretide Accuhaler 家族", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 63, "name": "SERETIDE 250 ACCUHALER INHALATION POWDER", "zh": "使肺泰２５０準納乾粉吸入劑", "nhi": "B023203137", "cls": "ICS/LABA", "device": "DPI", "ev": "B", "lo": 0.6, "mid": 1.25, "hi": 1.25, "q": 0.0, "t": 0, "mol": "fluticasone propionate+salmeterol", "map": "Accuhaler產品/裝置代理｜Seretide Accuhaler 家族", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 64, "name": "Seretide 50/500 Accuhaler, Inhalation Powder", "zh": "使肺泰 50/500 準納乾粉吸入劑", "nhi": "BC248491C5", "cls": "ICS/LABA", "device": "DPI", "ev": "B", "lo": 0.6, "mid": 1.25, "hi": 1.25, "q": 324.0, "t": 0.41, "mol": "fluticasone propionate+salmeterol", "map": "Accuhaler產品/裝置代理｜Seretide Accuhaler 家族", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 65, "name": "Foster NEXThaler", "zh": "肺舒坦耐舒樂 乾粉吸入劑 100/6mcg/dose", "nhi": "BC268161FL", "cls": "ICS/LABA", "device": "DPI", "ev": "A", "lo": 0.92, "mid": 0.92, "hi": 0.92, "q": 59061.4, "t": 54.1, "mol": "beclometasone+formoterol", "map": "直接產品/裝置LCA｜對應 Foster Nexthaler", "src": "https://www.mdpi.com/2071-1050/14/12/7106"}, {"no": 66, "name": "Relvar Ellipta 184/22 mcg Inhalation Powder", "zh": "潤娃易利達184/22 mcg 乾粉吸入劑", "nhi": "BC27034143", "cls": "ICS/LABA", "device": "DPI", "ev": "A", "lo": 0.4, "mid": 0.77, "hi": 0.8, "q": 95229.0, "t": 72.9, "mol": "fluticasone furoate+vilanterol", "map": "Ellipta產品/裝置LCA｜對應 Relvar Ellipta", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 67, "name": "Relvar Ellipta 92/22 mcg Inhalation Powder", "zh": "潤娃易利達92/22 mcg乾粉吸入劑", "nhi": "BC26318143", "cls": "ICS/LABA", "device": "DPI", "ev": "A", "lo": 0.4, "mid": 0.77, "hi": 0.8, "q": 449634.1, "t": 344.0, "mol": "fluticasone furoate+vilanterol", "map": "Ellipta產品/裝置LCA｜對應 Relvar Ellipta", "src": "https://publications.ersnet.org/content/erj/60/1/2102106"}, {"no": 68, "name": "SYMBICORT TURBUHALER 160/4.5MCG/DOSE", "zh": "〝吸必擴〞都保定量粉狀吸入劑160／4.5ug／dose", "nhi": "BC232651E7", "cls": "ICS/LABA", "device": "DPI", "ev": "C", "lo": 0.59, "mid": 0.59, "hi": 0.65, "q": 379839.2, "t": 223.5, "mol": "budesonide+formoterol", "map": "Turbuhaler公開模型/裝置代理｜對應 Symbicort Turbuhaler", "src": "https://www.medrxiv.org/content/10.1101/2025.07.12.25331451v1"}, {"no": 69, "name": "SYMBICORT TURBUHALER 160/4.5MCG/DOSE", "zh": "〝吸必擴〞都保定量粉狀吸入劑160／4.5ug／dose", "nhi": "B0232651E7", "cls": "ICS/LABA", "device": "DPI", "ev": "C", "lo": 0.59, "mid": 0.59, "hi": 0.65, "q": 0.0, "t": 0, "mol": "budesonide+formoterol", "map": "Turbuhaler公開模型/裝置代理｜對應 Symbicort Turbuhaler", "src": "https://www.medrxiv.org/content/10.1101/2025.07.12.25331451v1"}, {"no": 70, "name": "SYMBICORT TURUHALER 80/4.5MCG/DOSE", "zh": "〝吸必擴〞都保定量粉狀吸入劑 80／4.5ug／dose", "nhi": "BC232621EL", "cls": "ICS/LABA", "device": "DPI", "ev": "C", "lo": 0.59, "mid": 0.59, "hi": 0.8, "q": 2.0, "t": 0, "mol": "budesonide+formoterol", "map": "Turbuhaler 裝置家族 proxy｜缺直接產品完整 LCA；主值保留 C 級代理。", "src": "https://www.researchgate.net/publication/386199257_The_carbon_footprint_associated_with_the_overuse_of_short-acting_b2-a"}, {"no": 71, "name": "BREZTRI AEROSPHERE 160/7.2/5.0 micrograms", "zh": "必肺暢氣化噴霧劑160/7.2/5.0微克", "nhi": "BC28183457", "cls": "ICS/LABA/LAMA", "device": "pMDI", "ev": "B", "lo": 17.8, "mid": 17.8, "hi": 17.8, "q": 97688.8, "t": 1738.9, "mol": "budesonide+glycopyrronium+formoterol", "map": "產品估計｜對應 Breztri HFA", "src": "https://jamanetwork.com/journals/jama/fullarticle/2822997"}, {"no": 72, "name": "Trimbow", "zh": "喘寶定量吸入劑100/6/12.5 mcg/dose", "nhi": "BC27672457", "cls": "ICS/LABA/LAMA", "device": "pMDI", "ev": "A", "lo": 14.28, "mid": 14.3, "hi": 14.5, "q": 153435.0, "t": 2190.9, "mol": "beclometasone+glycopyrronium+formoterol", "map": "直接產品 LCA｜Trimbow：118.99 g CO₂e/actuation × 120 = 14.279 kg/device", "src": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7173981/"}, {"no": 73, "name": "Trelegy Ellipta 184/55/22 mcg Inhalation Powder", "zh": "肺樂喜易利達184/55/22 mcg 乾粉吸入劑", "nhi": "BC28240443", "cls": "ICS/LABA/LAMA", "device": "DPI", "ev": "B", "lo": 0.4, "mid": 0.79, "hi": 0.85, "q": 63940.2, "t": 50.5, "mol": "fluticasone furoate+umeclidinium+vilanterol", "map": "Ellipta裝置家族代理｜對應 Trelegy Ellipta", "src": "https://jamanetwork.com/journals/jama/fullarticle/2822997"}, {"no": 74, "name": "Trelegy Ellipta 92/55/22 mcg Inhalation Powder", "zh": "肺樂喜易利達92/55/22 mcg乾粉吸入劑", "nhi": "BC27395443", "cls": "ICS/LABA/LAMA", "device": "DPI", "ev": "B", "lo": 0.4, "mid": 0.79, "hi": 0.85, "q": 210533.2, "t": 166.3, "mol": "fluticasone furoate+umeclidinium+vilanterol", "map": "Ellipta裝置家族代理｜對應 Trelegy Ellipta", "src": "https://jamanetwork.com/journals/jama/fullarticle/2822997"}, {"no": 75, "name": "Enerzair breezhaler 150/50/160 mcg, inhalation powder hard capsule", "zh": "艾能舒吸入膠囊150/50/160微克", "nhi": "BC28049443", "cls": "ICS/LABA/LAMA", "device": "DPI", "ev": "A", "lo": 0.36, "mid": 0.36, "hi": 0.48, "q": 15634.0, "t": 5.61, "mol": "mometasone+indacaterol+glycopyrronium", "map": "Breezhaler產品/裝置家族｜Breezhaler 家族", "src": "https://www.mdpi.com/2071-1050/13/12/6657"}, {"no": 76, "name": "Enerzair breezhaler 150/50/80 mcg, inhalation powder hard capsule", "zh": "艾能舒吸入膠囊150/50/80微克", "nhi": "BC28048443", "cls": "ICS/LABA/LAMA", "device": "DPI", "ev": "A", "lo": 0.36, "mid": 0.36, "hi": 0.48, "q": 56.0, "t": 0.02, "mol": "mometasone+indacaterol+glycopyrronium", "map": "Breezhaler產品/裝置家族｜Breezhaler 家族", "src": "https://www.mdpi.com/2071-1050/13/12/6657"}];
+</script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const fmt0 = v => Math.round(v).toLocaleString("en-US");
+const SK = 18595.6;
+
+/* ---------- tabs ---------- */
+const TABS = ["rx", "atlas", "stw", "ev"];
+function showTab(k) {
+  if (!TABS.includes(k)) k = "rx";
+  TABS.forEach(t => { $("t-" + t).setAttribute("aria-selected", t === k); $("p-" + t).hidden = t !== k; });
+  try { localStorage.setItem("srx-tab", k); } catch (e) {}
+  if (location.hash !== "#" + k) history.replaceState(null, "", "#" + k);
+}
+TABS.forEach(t => $("t-" + t).addEventListener("click", () => showTab(t)));
+window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
+
+/* ---------- Rx (engine = copd_engine.js, unchanged) ---------- */
+const FIELDS = ["copdConfirmed","fevRatio","cat","mmrc","modEx","sevEx","eos","asthma","currentTherapy","smoking","fitDPI","fitSMI","fitPMDI","chronicBronchitis","fev1","pif"];
+let reason = "initial";
+const PRESETS = {
+  testpt:   { reason:"exacerbation", copdConfirmed:"yes", fevRatio:0.58, cat:18, mmrc:2, modEx:1, sevEx:1, eos:320, asthma:"no", currentTherapy:"LABA/LAMA", smoking:"former", fitDPI:"yes", fitSMI:"yes", fitPMDI:"yes", fev1:55, chronicBronchitis:"no" },
+  initialE: { reason:"initial", copdConfirmed:"yes", fevRatio:0.61, cat:16, mmrc:2, modEx:1, sevEx:0, eos:180, asthma:"no", currentTherapy:"none", smoking:"former", fitDPI:"yes", fitSMI:"yes", fitPMDI:"yes", fev1:62, chronicBronchitis:"no" },
+  dyspnea:  { reason:"dyspnea", copdConfirmed:"yes", fevRatio:0.55, cat:19, mmrc:3, modEx:0, sevEx:0, eos:90, asthma:"no", currentTherapy:"LAMA", smoking:"former", fitDPI:"no", fitSMI:"yes", fitPMDI:"spacer", fev1:58, chronicBronchitis:"no" },
+  stable:   { reason:"stable", copdConfirmed:"yes", fevRatio:0.60, cat:7, mmrc:1, modEx:0, sevEx:0, eos:120, asthma:"no", currentTherapy:"LABA/LAMA", smoking:"former", fitDPI:"yes", fitSMI:"yes", fitPMDI:"yes", fev1:68, chronicBronchitis:"no" },
+  lowpif:   { reason:"exacerbation", copdConfirmed:"yes", fevRatio:0.48, cat:24, mmrc:3, modEx:1, sevEx:1, eos:350, asthma:"no", currentTherapy:"LABA/LAMA", smoking:"former", fitDPI:"yes", fitSMI:"yes", fitPMDI:"yes", fev1:38, chronicBronchitis:"no", pif:24 },
+  missing:  { reason:"initial", copdConfirmed:"yes", fevRatio:0.62, cat:"", mmrc:"", modEx:"", sevEx:"", eos:"", asthma:"unknown", currentTherapy:"none", smoking:"", fitDPI:"unknown", fitSMI:"unknown", fitPMDI:"unknown", fev1:"", chronicBronchitis:"no" },
+};
+function setReason(v) { reason = v; document.querySelectorAll("#reasonPills .pill").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); }
+function loadPreset(k) {
+  const p = PRESETS[k]; if (!p) return;
+  FIELDS.forEach(f => { $(f).value = p[f] ?? ""; });
+  setReason(p.reason);
+  document.querySelectorAll("[data-preset]").forEach(b => b.classList.toggle("on", b.dataset.preset === k));
+  renderRx();
+}
+function state() {
+  const s = { reviewReason: reason };
+  FIELDS.forEach(f => { const v = $(f).value; s[f] = v === "" ? null : v; });
+  return s;
+}
+const dash = v => (v === null || v === undefined || v === "") ? "—" : v;
+function renderRx() {
+  const s = state();
+  const r = COPD_ENGINE.evaluate(s);
+  $("oGold").textContent = r.gold || "—";
+  $("oPath").textContent = r.pathway || (r.gold === "UNASSESSED" ? "資料不足" : "—");
+  $("oEx").textContent = (s.modEx === null && s.sevEx === null) ? "—" : `${dash(s.modEx)} / ${dash(s.sevEx)}`;
+  $("oEos").textContent = dash(s.eos);
+  $("oTitle").textContent = r.class ? r.title : (r.title || "—");
+  $("oSub").textContent = r.sub || "";
+  $("oReasons").innerHTML = r.reasons.map(x => `<li>${esc(x)}</li>`).join("");
+  $("oGaps").innerHTML = (r.dataGaps || []).map(x => `<div class="note warn">${esc(x)}</div>`).join("");
+  const adv = r.advanced.map(a => `<div class="note info">${esc(a.text)}</div>`).join("");
+  const gaps = (r.gaps || []).map(g => `<div class="muted" style="margin-top:6px">・<b>${esc(g.label)}</b>：${esc(g.text)}</div>`).join("");
+  $("oAdv").innerHTML = (adv || '<div class="muted">沒有進階建議。</div>') + (gaps ? `<div style="margin-top:10px"><b>非藥物與預防缺口</b>${gaps}</div>` : "");
+  // candidates
+  const tb = $("oCand"), note = $("oCandNote"); tb.innerHTML = ""; note.innerHTML = "";
+  const anyFit = ["fitDPI","fitSMI","fitPMDI"].some(f => s[f] && s[f] !== "unknown");
+  let target = r.class;
+  if (!target && reason === "stable" && s.currentTherapy && s.currentTherapy !== "none") target = s.currentTherapy;
+  if (!target) { $("oCandWrap").hidden = true; note.innerHTML = '<div class="note info">尚未產生臨床類別，不列出候選品項。</div>'; }
+  else if (!anyFit) { $("oCandWrap").hidden = true; note.innerHTML = '<div class="note warn">裝置能力尚未評估：已隱藏候選品項與碳排，避免在臨床條件確立前以碳排引導選藥。</div>'; }
+  else {
+    const list = COPD_ENGINE.candidates(target, s);
+    $("oCandWrap").hidden = !list.length;
+    if (!list.length) note.innerHTML = '<div class="note info">院內處方集沒有此類別的候選品項。</div>';
+    if (reason === "stable" && !r.class) note.innerHTML = '<div class="note info">穩定續方：本系統不因碳排要求換藥。以下僅供與病人討論同類別選項。</div>';
+    list.forEach(p => {
+      const c = p.carbon;
+      const band = c.known ? `<span class="chip ${c.band.id}">${esc(c.band.label)}</span>` : '<span class="chip unk">配方未確認</span>';
+      const kg = c.known ? `<b>${c.perYear.toFixed(1)}</b>` : '<span class="muted">不顯示</span>';
+      tb.insertAdjacentHTML("beforeend", `<tr><td><b>${esc(p.name)}</b><div class="muted">${esc(p.code)}</div></td><td><span class="chip ${p.device.toLowerCase()}">${esc(p.device)}</span></td><td>${esc(p.regimen)}</td><td><span class="chip ${p.fit.rank === 0 ? "low" : p.fit.rank >= 4 ? "high" : "mid"}">${esc(p.fit.label)}</span></td><td>${band}</td><td class="num">${kg}</td><td>${c.known ? esc(c.evidence) : "—"}</td></tr>`);
+    });
+  }
+  $("signoff").textContent = COPD_RULES.provenance.verified_date ? "" : "示範版：規則包尚未經胸腔科醫師簽核，不得用於臨床決策。";
+}
+document.querySelectorAll("#reasonPills .pill").forEach(b => b.addEventListener("click", () => { setReason(b.dataset.v); renderRx(); }));
+FIELDS.forEach(f => $(f).addEventListener("input", renderRx));
+document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => loadPreset(b.dataset.preset)));
+$("rxForm").addEventListener("submit", e => e.preventDefault());
+
+/* ---------- Atlas ---------- */
+const CLASSES = ["SABA","SABA/SAMA","ICS","LABA","LAMA","LABA/LAMA","ICS/LABA","ICS/LABA/LAMA"];
+const CLS_ZH = {"SABA":"SABA 短效β₂","SABA/SAMA":"SABA/SAMA","ICS":"ICS 類固醇","LABA":"LABA","LAMA":"LAMA","LABA/LAMA":"LABA/LAMA","ICS/LABA":"ICS/LABA","ICS/LABA/LAMA":"三合一"};
+const TOT = ATLAS.reduce((a, p) => a + p.t, 0), TQ = ATLAS.reduce((a, p) => a + p.q, 0);
+const isP = p => p.device === "pMDI";
+const MAINT = new Set(["ICS","LABA","LAMA","LABA/LAMA","ICS/LABA","ICS/LABA/LAMA"]);
+const ASTHMA_ONLY = /Enerzair/;
+function lowAlts(p) {
+  const same = ATLAS.filter(o => o.mol === p.mol && !isP(o) && o.no !== p.no);
+  const seen = new Set(); const sameU = same.filter(o => { const k = o.name.split(" ")[0] + o.mid; if (seen.has(k)) return false; seen.add(k); return true; })
+    .sort((a, b) => b.q - a.q);
+  const cls = ATLAS.filter(o => o.cls === p.cls && !isP(o) && o.mol !== p.mol && o.q > 100 && !ASTHMA_ONLY.test(o.name)).sort((a, b) => b.q - a.q).slice(0, 3);
+  return { same: sameU.slice(0, 3), cls };
+}
+function classEF(cls) {
+  const xs = ATLAS.filter(o => o.cls === cls && !isP(o) && o.q > 0 && !ASTHMA_ONLY.test(o.name));
+  const q = xs.reduce((a, o) => a + o.q, 0);
+  return q ? xs.reduce((a, o) => a + o.q * o.mid, 0) / q : null;
+}
+function altFor(p) {
+  const same = ATLAS.filter(o => o.mol === p.mol && !isP(o) && o.q > 0);
+  if (same.length) { const q = same.reduce((a, o) => a + o.q, 0); return { ef: same.reduce((a, o) => a + o.q * o.mid, 0) / q, kind: "同成分", name: same.sort((a, b) => b.q - a.q)[0].name.split(/\s\d|,/)[0] }; }
+  const ef = classEF(p.cls); return ef === null ? null : { ef, kind: "同類別", name: `${CLS_ZH[p.cls]} DPI／SMI` };
+}
+function renderAtlasTop() {
+  const pq = ATLAS.filter(isP).reduce((a, p) => a + p.q, 0), pt = ATLAS.filter(isP).reduce((a, p) => a + p.t, 0);
+  $("aTot").textContent = fmt0(TOT) + " t"; $("aQ").textContent = (TQ / 1e4).toFixed(1) + " 萬";
+  $("aPq").textContent = (pq / TQ * 100).toFixed(1) + "%"; $("aPt").textContent = (pt / TOT * 100).toFixed(1) + "%";
+  $("aInt").textContent = (TOT * 1000 / TQ).toFixed(2);
+  const max = Math.max(...CLASSES.map(c => ATLAS.filter(p => p.cls === c).reduce((a, p) => a + p.t, 0)));
+  $("classBars").innerHTML = CLASSES.map(c => {
+    const ps = ATLAS.filter(p => p.cls === c), a = ps.filter(isP).reduce((s, p) => s + p.t, 0), b = ps.filter(p => !isP(p)).reduce((s, p) => s + p.t, 0);
+    return `<div class="cb"><span>${esc(CLS_ZH[c])}</span><div class="track" role="img" aria-label="${esc(c)} ${fmt0(a + b)} t"><i class="p" style="width:${a / max * 100}%"></i><i class="d" style="width:${b / max * 100}%"></i></div><span class="v">${fmt0(a + b)}</span></div>`;
+  }).join("");
+  CLASSES.forEach(c => $("fClass").insertAdjacentHTML("beforeend", `<option value="${esc(c)}">${esc(CLS_ZH[c])}</option>`));
+}
+let fDev = "", openNo = null;
+function renderList() {
+  const q = $("fSearch").value.trim().toLowerCase(), cls = $("fClass").value, nz = $("fZero").checked;
+  const rows = ATLAS.filter(p => (!cls || p.cls === cls) && (!fDev || p.device === fDev) && (!nz || p.q > 0) &&
+    (!q || (p.name + p.zh + p.nhi).toLowerCase().includes(q))).sort((a, b) => b.t - a.t || b.q - a.q);
+  const maxT = Math.max(...ATLAS.map(p => p.t));
+  $("pList").innerHTML = rows.length ? rows.map(p => {
+    const w = Math.max(p.t / maxT * 100, p.t > 0 ? 0.6 : 0);
+    let det = "";
+    if (openNo === p.no) {
+      const A = lowAlts(p);
+      const card = o => { const d = p.mid - o.mid; const save = d > 0 && p.q ? ` ・若 10% 改用，全國每年約減 <span class="save">${fmt0(p.q * 0.1 * d / 1000)} t</span>` : "";
+        return `<div class="alt"><b>${esc(o.name)}</b><span class="chip ${o.device.toLowerCase()}">${o.device}</span> <span class="muted">${o.mid} kg／支（${esc(o.ev)}）</span><div class="muted">每支差 ${d > 0 ? "−" : "+"}${Math.abs(d).toFixed(1)} kg${save}</div></div>`; };
+      det = `<div class="pdetail"><div class="muted">${esc(p.zh)}｜健保碼 ${esc(p.nhi)}｜係數 ${p.lo}–${p.hi} kg（證據 ${esc(p.ev)}）｜${esc(p.map)}</div>
+        ${isP(p) ? (A.same.length ? `<div style="margin-top:8px"><b>同成分低碳劑型</b><div class="alts">${A.same.map(card).join("")}</div></div>` : '<div class="muted" style="margin-top:8px">健保目錄中沒有同成分的 DPI／SMI。</div>') +
+        (A.cls.length ? `<div style="margin-top:10px"><b>同治療類別的 DPI／SMI</b>（換分子，需臨床評估）<div class="alts">${A.cls.map(card).join("")}</div></div>` : "")
+        : '<div class="muted" style="margin-top:8px">此品項不含推進劑，已屬低碳裝置。</div>'}</div>`;
+    }
+    return `<button type="button" class="prow" data-no="${p.no}" aria-expanded="${openNo === p.no}"><span class="nm"><b>${esc(p.name)}</b><span>${esc(CLS_ZH[p.cls])}・${esc(p.zh)}</span></span><span class="devc"><span class="chip ${p.device.toLowerCase()}">${p.device}</span></span><span class="kg">${p.mid}<small>${p.q ? fmt0(p.q) + " 醫令" : "2025 無申報"}</small></span><span class="tbar"><i class="${isP(p) ? "" : "d"}" style="width:${w * 0.7}%"></i><span>${p.t ? fmt0(p.t) : "0"}${p.t >= 1 ? `（${(p.t / TOT * 100).toFixed(1)}%）` : ""}</span></span></button>${det}`;
+  }).join("") : '<p class="muted" style="padding:12px 4px">沒有符合條件的品項。清除搜尋或改選「全部類別」。</p>';
+}
+$("pList").addEventListener("click", e => { const b = e.target.closest(".prow[data-no]"); if (!b) return; const n = +b.dataset.no; openNo = openNo === n ? null : n; renderList(); });
+["fSearch","fClass","fZero"].forEach(id => $(id).addEventListener("input", () => { openNo = null; renderList(); }));
+document.querySelectorAll("#fDev .pill").forEach(b => b.addEventListener("click", () => { fDev = b.dataset.v; document.querySelectorAll("#fDev .pill").forEach(x => x.setAttribute("aria-pressed", x === b)); renderList(); }));
+
+/* ---------- Stewardship ---------- */
+const ASP = [
+  ["DDD／1,000 人日（DID）", "kg CO₂e／1,000 申報醫令、pMDI 占比"],
+  ["AWaRe 分類（Access／Watch／Reserve）", "碳分帶：低碳／中等／含高 GWP 推進劑"],
+  ["前瞻性稽核與回饋", "處方者季報：pMDI 占比與同儕比較"],
+  ["處方集管理與限用", "同成分低碳劑型優先進用；標示推進劑配方版本（不限用必要藥品）"],
+  ["決策支援（CDSS）", "COPD Sustainable Rx Assist：GOLD 判定後才比較碳排"],
+  ["成效：耐藥性、感染率", "成效：惡化、急診／住院不增加，kg CO₂e／病人年下降"],
+];
+$("aspMap").innerHTML = '<div class="h">抗生素管理（ASP）</div><div></div><div class="h">吸入器管理</div>' + ASP.map(([a, b]) => `<div>${esc(a)}</div><div class="ar">→</div><div>${esc(b)}</div>`).join("");
+const EXIT = ["BEROTEC N 100MCG/PUFF METERED AEROSOL", "BERODUAL N METERED AEROSOL"];
+const TOP3 = [/^Symbicort Rapihaler/, /^Foster$/, /^Trimbow$/];
+function stwBase() {
+  const pq = ATLAS.filter(isP).reduce((a, p) => a + p.q, 0);
+  const maint = ATLAS.filter(p => isP(p) && MAINT.has(p.cls) && p.q > 0);
+  const mq = maint.reduce((a, p) => a + p.q, 0), sq = maint.filter(p => altFor(p)?.kind === "同成分").reduce((a, p) => a + p.q, 0);
+  const ex = ATLAS.filter(p => EXIT.includes(p.name)).reduce((a, p) => a + p.t, 0);
+  $("sInt").textContent = fmt0(TOT * 1e6 / TQ); $("sPq").textContent = (pq / TQ * 100).toFixed(1) + "%";
+  $("sSame").textContent = (sq / mq * 100).toFixed(0) + "%"; $("sExit").textContent = (ex / TOT * 100).toFixed(1) + "%";
+}
+let E = "E3", scope = "all";
+function simulate(u, e, sc) {
+  const items = [];
+  ATLAS.filter(p => isP(p) && MAINT.has(p.cls) && p.q > 0 && (sc === "all" || TOP3.some(r => r.test(p.name)))).forEach(p => {
+    const a = altFor(p); if (!a) return; const d = p.q * u * (p.mid - a.ef) / 1000;
+    if (d > 0) items.push({ label: p.name.replace(/\s+\d.*$/, ""), to: `${a.kind}：${a.name}`, v: -d });
+  });
+  const ef2 = { E1: 28, E2: 14.5, E3: 1.0 }[e];
+  ATLAS.filter(p => EXIT.includes(p.name)).forEach(p => items.push({ label: p.name.split(" ").slice(0, 2).join(" ") + "（退場）", to: { E1: "其他 pMDI", E2: "半數 DPI／SMI", E3: "DPI／SMI" }[e], v: p.q * (ef2 - p.mid) / 1000 }));
+  const net = items.reduce((a, i) => a + i.v, 0);
+  return { net, items: items.sort((a, b) => Math.abs(b.v) - Math.abs(a.v)) };
+}
+function renderSim() {
+  const u = +$("sU").value / 100; $("sUv").textContent = Math.round(u * 100) + "%";
+  const r = simulate(u, E, scope);
+  const el = $("sNet"); el.textContent = (r.net > 0 ? "+" : "−") + fmt0(Math.abs(r.net)) + " t";
+  el.className = "bignum " + (r.net > 0 ? "bad" : "good");
+  $("sNetSub").innerHTML = `${r.net > 0 ? "增加" : "減少"} ${(Math.abs(r.net) / TOT * 100).toFixed(1)}%（基準 ${fmt0(TOT)} t）${r.net < 0 ? `，約等於新光醫院 <b>${(-r.net / SK).toFixed(2)}</b> 年的組織排放` : ""}`;
+  const top = r.items.slice(0, 8), mx = Math.max(...top.map(i => Math.abs(i.v)), 1);
+  $("sContrib").innerHTML = '<div class="muted" style="margin-top:4px">主要貢獻（t CO₂e／年）</div>' + top.map(i => `<div class="ct"><span><b>${esc(i.label)}</b><br><span class="muted">→ ${esc(i.to)}</span></span><span class="tr"><i class="${i.v > 0 ? "neg" : ""}" style="width:${Math.abs(i.v) / mx * 100}%"></i></span><span class="v">${i.v > 0 ? "+" : "−"}${fmt0(Math.abs(i.v))}</span></div>`).join("");
+}
+$("sU").addEventListener("input", renderSim);
+document.querySelectorAll("#sE .pill").forEach(b => b.addEventListener("click", () => { E = b.dataset.v; document.querySelectorAll("#sE .pill").forEach(x => x.setAttribute("aria-pressed", x === b)); renderSim(); }));
+document.querySelectorAll("#sScope .pill").forEach(b => b.addEventListener("click", () => { scope = b.dataset.v; document.querySelectorAll("#sScope .pill").forEach(x => x.setAttribute("aria-pressed", x === b)); renderSim(); }));
+
+/* ---------- Evidence ---------- */
+const EV = [
+  { q: "嗜酸性球會改變 ICS 的效益嗎？", stat: "RHR 1.09", d: "ICS/LABA vs LABA/LAMA，依嗜酸性球 <150 與 ≥150 分層（4,098 與 5,772 對）", r: "校正後所有結果的 HR 比值都跨過 1；兩層都看不到 ICS 減少惡化。但在高嗜酸性球層，LABA/LAMA 使用者升階為三合一明顯較多（校正 HR 0.62）。", so: "臨床醫師確實照指標開藥，結果卻沒有跟著改變。<b>管理端</b>應稽核 ICS 升階的適當性。" },
+  { q: "肺炎病史會改變 ICS 的效益嗎？", stat: "RHR 0.94", d: "Budesonide/formoterol vs tiotropium/olodaterol，依肺炎病史分層（1,133 與 5,344 對）", r: "肺炎病史不改變 ICS 的風險效益。但曾得肺炎、使用 LABA/LAMA 的病人，升階加回 ICS 的機率反而高 67%。", so: "ICS 被加回指引建議避免的族群。這是<b>處方者回饋</b>最該呈現的數字。" },
+  { q: "FF 與 budesonide 三合一，肺炎風險有差嗎？", stat: "RR 0.985", d: "Trelegy（DPI）vs Breztri（pMDI），肺炎病史族群（2,107 對）", r: "校正後再次肺炎 RR 0.985（0.91–1.07），上限排除 propionate 的 1.13。但 Trelegy 被降階的機率高 2.1 倍。", so: "在最高風險族群中，選擇 <b>DPI 三合一</b>沒有肺炎代價；每位病人每年碳排約 9.6 kg 對 216 kg（HFA-134a 配方）。" },
+];
+$("evCards").innerHTML = EV.map(e => `<article class="evc"><div class="q">${esc(e.q)}</div><div class="stat">${esc(e.stat)}</div><div class="muted">${esc(e.d)}</div><div>${esc(e.r)}</div><div class="so">${e.so}</div></article>`).join("");
+const EV2 = [
+  { q: "Berotec N、Berodual N 退出台灣", stat: "16.9%", r: "原廠說明全球逐步停產傳統 pMDI，以避免推進劑排放增加碳足跡；最後一批 2026 年 9 月到貨。食藥署說明屬企業經營決策與環境永續考量。", so: "兩項合占 2025 全國碳足跡 16.9%。替代若仍是 pMDI，碳排會<b>增加</b>。" },
+  { q: "NICE／BTS 病人決策輔助", stat: "<1 kg", r: "多數乾粉吸入器每支碳足跡不到 1 kg CO₂e；常見 pMDI 約 10–35 kg。病人不應未經討論就自行停用現有吸入器。", so: "<b>共享決策</b>：先確認會用、吸得動，再談碳排。" },
+];
+$("evCards2").innerHTML = EV2.map(e => `<article class="evc"><div class="q">${esc(e.q)}</div><div class="stat">${esc(e.stat)}</div><div>${esc(e.r)}</div><div class="so">${e.so}</div></article>`).join("");
+
+/* ---------- boot ---------- */
+renderAtlasTop(); renderList(); stwBase(); renderSim(); loadPreset("testpt");
+let start = location.hash.slice(1);
+if (!TABS.includes(start)) { try { start = localStorage.getItem("srx-tab") || "rx"; } catch (e) { start = "rx"; } }
+showTab(start);
+</script>
+
+</body></html>
